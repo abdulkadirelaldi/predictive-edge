@@ -1,0 +1,1277 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Predictive-Edge — Kestirimci Bakım Sistemi</title>
+<style>
+:root {
+  --bg:       #060c14;
+  --card:     #0b1623;
+  --card2:    #0f1e30;
+  --border:   #1a3048;
+  --cyan:     #00d4ff;
+  --green:    #00e676;
+  --yellow:   #ffc107;
+  --orange:   #ff6d00;
+  --red:      #ff1744;
+  --text:     #cdd9e5;
+  --muted:    #5d7a91;
+  --radius:   10px;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 14px;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── SCROLLBAR ──────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ── HEADER ─────────────────────────────────── */
+header {
+  background: linear-gradient(135deg, #071525 0%, #0a1f35 50%, #071525 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 0 28px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 20px rgba(0,212,255,.08);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, var(--cyan), #0066ff);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 0 16px rgba(0,212,255,.4);
+}
+
+.logo-text h1 {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #fff;
+}
+
+.logo-text p {
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: .5px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.live-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(0,230,118,.08);
+  border: 1px solid rgba(0,230,118,.2);
+  border-radius: 20px;
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--green);
+  letter-spacing: .5px;
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: pulse-green 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse-green {
+  0%,100% { opacity:1; transform:scale(1); box-shadow:0 0 0 0 rgba(0,230,118,.5); }
+  50% { opacity:.7; transform:scale(1.3); box-shadow:0 0 0 5px rgba(0,230,118,0); }
+}
+
+.alarm-btn {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.alarm-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  background: var(--red);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: shake .5s ease-in-out infinite;
+}
+
+@keyframes shake {
+  0%,100% { transform:rotate(-8deg); }
+  50%      { transform:rotate(8deg); }
+}
+
+#clock {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cyan);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
+}
+
+/* ── KPI BAR ─────────────────────────────────── */
+.kpi-bar {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  padding: 16px 24px;
+  background: rgba(11,22,35,.5);
+  border-bottom: 1px solid var(--border);
+}
+
+.kpi-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,.3);
+}
+
+.kpi-label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.kpi-value {
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi-sub {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.kpi-card.total  .kpi-value { color: var(--cyan); }
+.kpi-card.green  .kpi-value { color: var(--green); }
+.kpi-card.yellow .kpi-value { color: var(--yellow); }
+.kpi-card.orange .kpi-value { color: var(--orange); }
+.kpi-card.red    .kpi-value { color: var(--red); }
+
+.kpi-card.red {
+  border-color: rgba(255,23,68,.25);
+  background: rgba(255,23,68,.04);
+  animation: border-pulse 2s ease-in-out infinite;
+}
+
+@keyframes border-pulse {
+  0%,100% { border-color: rgba(255,23,68,.25); }
+  50%      { border-color: rgba(255,23,68,.6); }
+}
+
+/* ── MAIN GRID ───────────────────────────────── */
+.main-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 14px;
+  padding: 14px 24px;
+}
+
+/* ── PANEL BASE ──────────────────────────────── */
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card2);
+}
+
+.panel-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+.panel-body {
+  padding: 18px;
+}
+
+/* ── SIMULATION PANEL ────────────────────────── */
+.sim-panel { position: relative; }
+
+.gauge-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0 4px;
+}
+
+.gauge-canvas-wrap {
+  position: relative;
+  width: 220px;
+  height: 120px;
+}
+
+.gauge-center {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.gauge-pct {
+  font-size: 30px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.gauge-label {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+
+.motor-id-badge {
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 4px 14px;
+  border-radius: 20px;
+  background: rgba(0,212,255,.1);
+  border: 1px solid rgba(0,212,255,.25);
+  color: var(--cyan);
+}
+
+.readings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.reading-item {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 13px;
+}
+
+.reading-label {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 4px;
+}
+
+.reading-value {
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.reading-unit {
+  font-size: 11px;
+  color: var(--muted);
+  margin-left: 2px;
+}
+
+.status-badge {
+  margin-top: 14px;
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.status-LOW      { background:rgba(0,230,118,.12); border:1px solid rgba(0,230,118,.3); color:var(--green); }
+.status-MEDIUM   { background:rgba(255,193, 7,.10); border:1px solid rgba(255,193,7,.3); color:var(--yellow); }
+.status-HIGH     { background:rgba(255,109, 0,.10); border:1px solid rgba(255,109,0,.3); color:var(--orange); }
+.status-CRITICAL { background:rgba(255, 23,68,.12); border:1px solid rgba(255,23,68,.4); color:var(--red); animation:border-pulse 1.2s ease-in-out infinite; }
+
+.rul-bar-wrap {
+  margin-top: 14px;
+}
+
+.rul-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+.rul-label span:last-child {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.rul-track {
+  height: 6px;
+  background: var(--card2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.rul-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width .6s ease, background .6s ease;
+}
+
+/* ── TIME SERIES CHART ───────────────────────── */
+.chart-panel .panel-body {
+  padding: 14px;
+  height: calc(100% - 49px);
+}
+
+.chart-panel canvas {
+  width: 100% !important;
+  max-height: 300px;
+}
+
+/* ── SECONDARY GRID ──────────────────────────── */
+.secondary-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 14px;
+  padding: 0 24px 14px;
+}
+
+/* ── MODEL METRICS ───────────────────────────── */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.metric-item {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+}
+
+.metric-name {
+  font-size: 11px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: 5px;
+}
+
+.metric-val {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--cyan);
+}
+
+.metric-val.green { color: var(--green); }
+.metric-val.yellow { color: var(--yellow); }
+
+.metric-bar-list { display: flex; flex-direction: column; gap: 9px; }
+
+.mbar-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 50px;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+}
+
+.mbar-name { color: var(--muted); }
+
+.mbar-track {
+  height: 6px;
+  background: rgba(255,255,255,.05);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.mbar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan), #0066ff);
+  border-radius: 3px;
+  transition: width 1s ease;
+}
+
+.mbar-fill.green  { background: linear-gradient(90deg, var(--green), #00b248); }
+.mbar-fill.yellow { background: linear-gradient(90deg, var(--yellow), #ff8f00); }
+
+.mbar-num { text-align: right; font-weight: 600; color: var(--text); font-size: 12px; }
+
+.arch-badge {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 12px;
+}
+
+.arch-badge .arch-icon { font-size: 16px; }
+.arch-badge .arch-info { color: var(--muted); }
+.arch-badge .arch-val  { font-weight: 700; color: var(--cyan); font-size: 13px; }
+
+/* ── DISTRIBUTION PANEL ──────────────────────── */
+.dist-panel .panel-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.dist-canvas-wrap {
+  width: 200px;
+  height: 200px;
+}
+
+.dist-legend {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.legend-left {
+  display: flex;
+  align-items: center;
+}
+
+.legend-count {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── MOTOR FLEET ─────────────────────────────── */
+.fleet-section {
+  padding: 0 24px 24px;
+}
+
+.fleet-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.fleet-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+.fleet-filter {
+  display: flex;
+  gap: 8px;
+}
+
+.filter-btn {
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+}
+
+.filter-btn:hover, .filter-btn.active {
+  background: rgba(0,212,255,.12);
+  border-color: var(--cyan);
+  color: var(--cyan);
+}
+
+.motor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: 8px;
+}
+
+.motor-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 8px;
+  cursor: pointer;
+  transition: all .18s;
+  text-align: center;
+}
+
+.motor-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,.4);
+}
+
+.motor-card .m-id {
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: .5px;
+  margin-bottom: 5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.motor-card .m-pct {
+  font-size: 15px;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+
+.motor-card .m-rul {
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 3px;
+}
+
+.motor-card.low      { border-color:rgba(0,230,118,.25);  }
+.motor-card.medium   { border-color:rgba(255,193, 7,.25); }
+.motor-card.high     { border-color:rgba(255,109, 0,.3);  }
+.motor-card.critical { border-color:rgba(255,23, 68,.35); animation:border-pulse 1.8s ease-in-out infinite; }
+.motor-card.low      .m-pct { color:var(--green); }
+.motor-card.medium   .m-pct { color:var(--yellow); }
+.motor-card.high     .m-pct { color:var(--orange); }
+.motor-card.critical .m-pct { color:var(--red); }
+
+/* ── MODAL ───────────────────────────────────── */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.7);
+  backdrop-filter: blur(4px);
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-overlay.open { display: flex; }
+
+.modal {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px;
+  width: 460px;
+  max-width: 95vw;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0,0,0,.6);
+}
+
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.modal-close:hover { color: var(--text); }
+
+.modal h2 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cyan);
+  margin-bottom: 18px;
+}
+
+.modal-rows { display: flex; flex-direction: column; gap: 10px; }
+
+.modal-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 12px;
+  background: var(--card2);
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.modal-row .key { color: var(--muted); }
+.modal-row .val { font-weight: 600; }
+
+/* ── FOOTER ──────────────────────────────────── */
+footer {
+  text-align: center;
+  padding: 14px;
+  font-size: 11px;
+  color: var(--muted);
+  border-top: 1px solid var(--border);
+  background: var(--card);
+}
+</style>
+</head>
+<body>
+
+<!-- ──────────── HEADER ──────────────────────── -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚙</div>
+    <div class="logo-text">
+      <h1>PREDICTIVE-EDGE</h1>
+      <p>TÜBİTAK BiGG 1812 · Kestirimci Bakım Sistemi v2.0</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      CANLI
+    </div>
+    <button class="alarm-btn" onclick="scrollToFleet('critical')" title="Kritik alarmlar">
+      🔔
+      <span class="alarm-badge" id="alarmCount">{{ stats.alarm }}</span>
+    </button>
+    <div id="clock">--:--:--</div>
+  </div>
+</header>
+
+<!-- ──────────── KPI BAR ─────────────────────── -->
+<div class="kpi-bar">
+  <div class="kpi-card total">
+    <div class="kpi-label">Toplam Motor</div>
+    <div class="kpi-value">{{ stats.total }}</div>
+    <div class="kpi-sub">Aktif izleme altında</div>
+  </div>
+  <div class="kpi-card green">
+    <div class="kpi-label">Sağlıklı</div>
+    <div class="kpi-value" id="kpi-low">{{ stats.low }}</div>
+    <div class="kpi-sub">Öncelik: NORMAL</div>
+  </div>
+  <div class="kpi-card yellow">
+    <div class="kpi-label">Uyarı</div>
+    <div class="kpi-value" id="kpi-med">{{ stats.medium }}</div>
+    <div class="kpi-sub">72 saat içinde kontrol</div>
+  </div>
+  <div class="kpi-card orange">
+    <div class="kpi-label">Yüksek Risk</div>
+    <div class="kpi-value" id="kpi-high">{{ stats.high }}</div>
+    <div class="kpi-sub">24 saat içinde müdahale</div>
+  </div>
+  <div class="kpi-card red">
+    <div class="kpi-label">⚠ Kritik Alarm</div>
+    <div class="kpi-value" id="kpi-crit">{{ stats.critical }}</div>
+    <div class="kpi-sub">Hemen durdur!</div>
+  </div>
+</div>
+
+<!-- ──────────── MAIN GRID ───────────────────── -->
+<div class="main-grid">
+
+  <!-- Simulation Panel -->
+  <div class="panel sim-panel">
+    <div class="panel-header">
+      <span class="panel-title">🔴 Canlı Motor Simülasyonu</span>
+      <span id="updateTs" style="font-size:10px;color:var(--muted)">--</span>
+    </div>
+    <div class="panel-body">
+      <div class="gauge-wrapper">
+        <div class="gauge-canvas-wrap">
+          <canvas id="gaugeChart"></canvas>
+          <div class="gauge-center">
+            <div class="gauge-pct" id="gaugePct" style="color:var(--green)">0%</div>
+            <div class="gauge-label">Arıza Olasılığı</div>
+          </div>
+        </div>
+        <div class="motor-id-badge" id="simMotorId">MOTOR-0000</div>
+      </div>
+
+      <div class="readings-grid">
+        <div class="reading-item">
+          <div class="reading-label">🌡 Sıcaklık</div>
+          <div class="reading-value" id="rTemp">--<span class="reading-unit">°C</span></div>
+        </div>
+        <div class="reading-item">
+          <div class="reading-label">⚡ Akım</div>
+          <div class="reading-value" id="rCur">--<span class="reading-unit">A</span></div>
+        </div>
+        <div class="reading-item">
+          <div class="reading-label">📳 Titreşim RMS</div>
+          <div class="reading-value" id="rVib">--</div>
+        </div>
+        <div class="reading-item">
+          <div class="reading-label">🔁 Harmonik Oran</div>
+          <div class="reading-value" id="rHarm">--</div>
+        </div>
+      </div>
+
+      <div class="status-badge status-LOW" id="statusBadge">NORMAL</div>
+
+      <div class="rul-bar-wrap">
+        <div class="rul-label">
+          <span>Kalan Ömür (RUL)</span>
+          <span id="rulVal">-- saat</span>
+        </div>
+        <div class="rul-track">
+          <div class="rul-fill" id="rulFill" style="width:100%;background:var(--green)"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Time Series Chart -->
+  <div class="panel chart-panel">
+    <div class="panel-header">
+      <span class="panel-title">📈 Gerçek Zamanlı Sensör Geçmişi</span>
+      <span style="font-size:10px;color:var(--muted)">Son 40 okuma · 2 sn güncelleme</span>
+    </div>
+    <div class="panel-body" style="height:320px">
+      <canvas id="timeChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────── SECONDARY GRID ──────────────── -->
+<div class="secondary-grid">
+
+  <!-- Model Metrics -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title">🧠 YSA Model Performansı</span>
+      <span style="font-size:10px;color:var(--muted)">MLP Classifier · Scikit-Learn</span>
+    </div>
+    <div class="panel-body">
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <div class="metric-name">Hold-out Accuracy</div>
+          <div class="metric-val">{{ metrics.accuracy }}%</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-name">ROC-AUC</div>
+          <div class="metric-val green">{{ "%.4f"|format(metrics.roc_auc) }}</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-name">5-Fold CV F1</div>
+          <div class="metric-val">{{ metrics.cv_f1 }}</div>
+        </div>
+        <div class="metric-item">
+          <div class="metric-name">5-Fold ROC-AUC</div>
+          <div class="metric-val green">{{ metrics.cv_auc }}</div>
+        </div>
+      </div>
+
+      <div class="metric-bar-list">
+        <div class="mbar-row">
+          <span class="mbar-name">Accuracy</span>
+          <div class="mbar-track"><div class="mbar-fill" style="width:{{ metrics.accuracy }}%"></div></div>
+          <span class="mbar-num">{{ metrics.accuracy }}%</span>
+        </div>
+        <div class="mbar-row">
+          <span class="mbar-name">F1-Score</span>
+          <div class="mbar-track"><div class="mbar-fill" style="width:{{ (metrics.f1*100)|round(1) }}%"></div></div>
+          <span class="mbar-num">{{ "%.4f"|format(metrics.f1) }}</span>
+        </div>
+        <div class="mbar-row">
+          <span class="mbar-name">Precision</span>
+          <div class="mbar-track"><div class="mbar-fill green" style="width:{{ (metrics.precision*100)|round(1) }}%"></div></div>
+          <span class="mbar-num">{{ "%.4f"|format(metrics.precision) }}</span>
+        </div>
+        <div class="mbar-row">
+          <span class="mbar-name">Recall</span>
+          <div class="mbar-track"><div class="mbar-fill green" style="width:{{ (metrics.recall*100)|round(1) }}%"></div></div>
+          <span class="mbar-num">{{ "%.4f"|format(metrics.recall) }}</span>
+        </div>
+        <div class="mbar-row">
+          <span class="mbar-name">ROC-AUC</span>
+          <div class="mbar-track"><div class="mbar-fill yellow" style="width:{{ (metrics.roc_auc*100)|round(1) }}%"></div></div>
+          <span class="mbar-num">{{ "%.4f"|format(metrics.roc_auc) }}</span>
+        </div>
+      </div>
+
+      <div class="arch-badge" style="margin-top:14px">
+        <span class="arch-icon">🏗</span>
+        <div>
+          <div class="arch-info">Mimari · {{ metrics.features }} Özellik · {{ metrics.iterations }} İterasyon</div>
+          <div class="arch-val">{{ metrics.architecture }}</div>
+        </div>
+      </div>
+      <div class="arch-badge">
+        <span class="arch-icon">📊</span>
+        <div>
+          <div class="arch-info">Veri: {{ metrics.samples }} Örnek · Özellikler: Harmonik Oran + Spektral Entropi + FFT</div>
+          <div class="arch-val">RUL Modeli: T_max × (1 − P_fault) + ε</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fleet Distribution -->
+  <div class="panel dist-panel">
+    <div class="panel-header">
+      <span class="panel-title">🎯 Filo Durumu</span>
+    </div>
+    <div class="panel-body">
+      <div class="dist-canvas-wrap">
+        <canvas id="distChart"></canvas>
+      </div>
+      <div class="dist-legend">
+        <div class="legend-item">
+          <div class="legend-left">
+            <div class="legend-dot" style="background:var(--green)"></div>
+            <span>Normal (LOW)</span>
+          </div>
+          <span class="legend-count" style="color:var(--green)">{{ stats.low }}</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-left">
+            <div class="legend-dot" style="background:var(--yellow)"></div>
+            <span>Uyarı (MEDIUM)</span>
+          </div>
+          <span class="legend-count" style="color:var(--yellow)">{{ stats.medium }}</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-left">
+            <div class="legend-dot" style="background:var(--orange)"></div>
+            <span>Yüksek Risk (HIGH)</span>
+          </div>
+          <span class="legend-count" style="color:var(--orange)">{{ stats.high }}</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-left">
+            <div class="legend-dot" style="background:var(--red)"></div>
+            <span>Kritik Alarm</span>
+          </div>
+          <span class="legend-count" style="color:var(--red)">{{ stats.critical }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ──────────── MOTOR FLEET ──────────────────── -->
+<div class="fleet-section">
+  <div class="fleet-header">
+    <span class="fleet-title">⚙ Motor Filosu — {{ stats.total }} Motor</span>
+    <div class="fleet-filter">
+      <button class="filter-btn active" onclick="filterMotors('all',this)">Tümü</button>
+      <button class="filter-btn" onclick="filterMotors('low',this)">Normal</button>
+      <button class="filter-btn" onclick="filterMotors('medium',this)">Uyarı</button>
+      <button class="filter-btn" onclick="filterMotors('high',this)">Yüksek</button>
+      <button class="filter-btn" onclick="filterMotors('critical',this)">Kritik</button>
+    </div>
+  </div>
+  <div class="motor-grid" id="motorGrid"></div>
+</div>
+
+<!-- ──────────── MOTOR DETAIL MODAL ──────────── -->
+<div class="modal-overlay" id="motorModal">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h2 id="modalTitle">Motor Detayı</h2>
+    <div class="modal-rows" id="modalBody"></div>
+  </div>
+</div>
+
+<footer>
+  Predictive-Edge v2.0 &nbsp;·&nbsp; TÜBİTAK BiGG 1812 &nbsp;·&nbsp;
+  MLP: 8→16→8→1 &nbsp;·&nbsp; 5-Fold CV F1: {{ metrics.cv_f1 }} &nbsp;·&nbsp;
+  Simülasyon 2 sn aralıklı güncelleniyor
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+/* ── DATA ────────────────────────────────────── */
+const MOTORS = {{ motors_json|safe }};
+const STATS  = {{ stats|tojson }};
+
+/* ── CLOCK ───────────────────────────────────── */
+function updateClock() {
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('tr-TR');
+}
+setInterval(updateClock, 1000);
+updateClock();
+
+/* ── COLORS ──────────────────────────────────── */
+const C = {
+  LOW     : '#00e676',
+  MEDIUM  : '#ffc107',
+  HIGH    : '#ff6d00',
+  CRITICAL: '#ff1744',
+  cyan    : '#00d4ff',
+};
+
+function priorityColor(p) { return C[p] || C.cyan; }
+
+function faultColor(pct) {
+  if (pct < 35) return C.LOW;
+  if (pct < 65) return C.MEDIUM;
+  if (pct < 85) return C.HIGH;
+  return C.CRITICAL;
+}
+
+/* ── GAUGE CHART ─────────────────────────────── */
+const gaugeCtx = document.getElementById('gaugeChart').getContext('2d');
+const gaugeChart = new Chart(gaugeCtx, {
+  type: 'doughnut',
+  data: {
+    datasets: [{
+      data: [0, 100, 100],
+      backgroundColor: [C.LOW, 'rgba(255,255,255,.05)', 'transparent'],
+      borderWidth: 0,
+      hoverOffset: 0,
+    }]
+  },
+  options: {
+    circumference: 180,
+    rotation: -90,
+    cutout: '72%',
+    animation: { duration: 600 },
+    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+    events: [],
+  }
+});
+
+function updateGauge(pct) {
+  const col = faultColor(pct);
+  gaugeChart.data.datasets[0].data = [pct, 100 - pct, 100];
+  gaugeChart.data.datasets[0].backgroundColor[0] = col;
+  gaugeChart.update('active');
+  const el = document.getElementById('gaugePct');
+  el.textContent = pct.toFixed(1) + '%';
+  el.style.color = col;
+}
+
+/* ── TIME SERIES CHART ───────────────────────── */
+const MAX_POINTS = 40;
+const tsLabels   = Array(MAX_POINTS).fill('');
+const tsTemp     = Array(MAX_POINTS).fill(null);
+const tsCur      = Array(MAX_POINTS).fill(null);
+const tsFP       = Array(MAX_POINTS).fill(null);
+
+const tsCtx = document.getElementById('timeChart').getContext('2d');
+const timeChart = new Chart(tsCtx, {
+  type: 'line',
+  data: {
+    labels: tsLabels,
+    datasets: [
+      {
+        label: 'Sıcaklık (°C)',
+        data: tsTemp,
+        borderColor: C.CRITICAL,
+        backgroundColor: 'rgba(255,23,68,.06)',
+        borderWidth: 1.8,
+        fill: true,
+        tension: 0.35,
+        pointRadius: 0,
+        yAxisID: 'yLeft',
+      },
+      {
+        label: 'Akım (A)',
+        data: tsCur,
+        borderColor: C.cyan,
+        backgroundColor: 'rgba(0,212,255,.06)',
+        borderWidth: 1.8,
+        fill: true,
+        tension: 0.35,
+        pointRadius: 0,
+        yAxisID: 'yLeft',
+      },
+      {
+        label: 'Arıza Olasılığı (%)',
+        data: tsFP,
+        borderColor: C.MEDIUM,
+        borderWidth: 1.5,
+        borderDash: [4, 3],
+        fill: false,
+        tension: 0.3,
+        pointRadius: 0,
+        yAxisID: 'yRight',
+      },
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    animation: { duration: 300 },
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: {
+        labels: { color: '#5d7a91', font: { size: 11 }, boxWidth: 14 }
+      }
+    },
+    scales: {
+      x: {
+        ticks: { display: false },
+        grid: { color: 'rgba(255,255,255,.04)' },
+      },
+      yLeft: {
+        type: 'linear',
+        position: 'left',
+        ticks: { color: '#5d7a91', font: { size: 10 } },
+        grid: { color: 'rgba(255,255,255,.04)' },
+        title: { display: true, text: 'Sıcaklık / Akım', color: '#5d7a91', font: { size: 10 } },
+      },
+      yRight: {
+        type: 'linear',
+        position: 'right',
+        min: 0, max: 100,
+        ticks: { color: '#5d7a91', font: { size: 10 } },
+        grid: { drawOnChartArea: false },
+        title: { display: true, text: 'Arıza % ', color: '#5d7a91', font: { size: 10 } },
+      },
+    }
+  }
+});
+
+function pushTs(temp, cur, fp) {
+  const now = new Date().toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  tsLabels.shift();  tsLabels.push(now);
+  tsTemp.shift();    tsTemp.push(temp);
+  tsCur.shift();     tsCur.push(cur);
+  tsFP.shift();      tsFP.push(fp);
+  timeChart.update('none');
+}
+
+/* ── DISTRIBUTION CHART ──────────────────────── */
+const distCtx = document.getElementById('distChart').getContext('2d');
+new Chart(distCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Normal', 'Uyarı', 'Yüksek Risk', 'Kritik'],
+    datasets: [{
+      data: [STATS.low, STATS.medium, STATS.high, STATS.critical],
+      backgroundColor: [
+        'rgba(0,230,118,.75)',
+        'rgba(255,193, 7,.75)',
+        'rgba(255,109, 0,.75)',
+        'rgba(255, 23,68,.75)',
+      ],
+      borderColor: 'transparent',
+      borderWidth: 0,
+      hoverOffset: 6,
+    }]
+  },
+  options: {
+    cutout: '60%',
+    animation: { duration: 800 },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.label}: ${ctx.parsed} motor`,
+        }
+      }
+    }
+  }
+});
+
+/* ── MOTOR FLEET GRID ────────────────────────── */
+const motorGrid   = document.getElementById('motorGrid');
+let   activeFilter = 'all';
+
+function buildMotorGrid(filter) {
+  motorGrid.innerHTML = '';
+  MOTORS.forEach((m, i) => {
+    const p = m.maintenance.priority.toLowerCase();
+    if (filter !== 'all' && p !== filter) return;
+    const fp  = m.prediction.fault_prob_pct;
+    const rul = m.maintenance.rul_days;
+    const card = document.createElement('div');
+    card.className = `motor-card ${p}`;
+    card.dataset.idx = i;
+    card.innerHTML = `
+      <div class="m-id">${m.meta.motor_id.replace('MOTOR-','M-')}</div>
+      <div class="m-pct">${fp.toFixed(0)}%</div>
+      <div class="m-rul">${rul}g</div>`;
+    card.addEventListener('click', () => openModal(i));
+    motorGrid.appendChild(card);
+  });
+}
+
+function filterMotors(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  buildMotorGrid(f);
+}
+
+function scrollToFleet(f) {
+  document.querySelector('.fleet-section').scrollIntoView({ behavior: 'smooth' });
+  const btn = [...document.querySelectorAll('.filter-btn')]
+    .find(b => b.textContent.toLowerCase().includes(f === 'critical' ? 'kritik' : f));
+  if (btn) filterMotors(f, btn);
+}
+
+buildMotorGrid('all');
+
+/* ── MODAL ───────────────────────────────────── */
+function openModal(idx) {
+  const m    = MOTORS[idx];
+  const s    = m.sensor_readings;
+  const prio = m.maintenance.priority;
+  document.getElementById('modalTitle').textContent =
+    `${m.meta.motor_id}  —  ${m.prediction.class_name}`;
+  document.getElementById('modalBody').innerHTML = [
+    ['Arıza Olasılığı', `${m.prediction.fault_prob_pct}%`, faultColor(m.prediction.fault_prob_pct)],
+    ['Durum',           m.maintenance.status,              priorityColor(prio)],
+    ['Öncelik',         prio,                              priorityColor(prio)],
+    ['Kalan Ömür',      `${m.maintenance.rul_hours} saat (${m.maintenance.rul_days} gün)`, '#cdd9e5'],
+    ['Önerilen Eylem',  m.maintenance.recommended_action,  '#cdd9e5'],
+    ['Sıcaklık',        `${s.temperature_c} °C`,           '#cdd9e5'],
+    ['Akım',            `${s.current_a} A`,                '#cdd9e5'],
+    ['Titreşim RMS',    `${s.vibration_rms}`,              '#cdd9e5'],
+    ['Harmonik Oran',   `${s.harmonic_ratio}`,             '#cdd9e5'],
+    ['Spektral Entropi',`${s.spectral_entropy}`,           '#cdd9e5'],
+  ].map(([k, v, col]) =>
+    `<div class="modal-row">
+       <span class="key">${k}</span>
+       <span class="val" style="color:${col}">${v}</span>
+     </div>`
+  ).join('');
+  document.getElementById('motorModal').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('motorModal').classList.remove('open');
+}
+
+document.getElementById('motorModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+});
+
+/* ── SIMULATION LOOP ─────────────────────────── */
+async function tick() {
+  try {
+    const res  = await fetch('/api/simulate');
+    const data = await res.json();
+    const fp   = data.fault_prob;
+    const prio = data.priority;
+
+    // Gauge
+    updateGauge(fp);
+
+    // Motor ID
+    document.getElementById('simMotorId').textContent = data.motor_id;
+
+    // Readings
+    document.getElementById('rTemp').innerHTML =
+      `${data.readings.temperature_c.toFixed(1)}<span class="reading-unit">°C</span>`;
+    document.getElementById('rCur').innerHTML =
+      `${data.readings.current_a.toFixed(2)}<span class="reading-unit">A</span>`;
+    document.getElementById('rVib').textContent =
+      data.readings.vibration_rms.toFixed(3);
+    document.getElementById('rHarm').textContent =
+      data.readings.harmonic_ratio.toFixed(4);
+
+    // Status badge
+    const badge = document.getElementById('statusBadge');
+    badge.className = `status-badge status-${prio}`;
+    badge.textContent = data.status;
+
+    // RUL bar
+    const rulPct = Math.min(100, (data.rul_hours / 8760) * 100);
+    const rulFill = document.getElementById('rulFill');
+    rulFill.style.width   = rulPct + '%';
+    rulFill.style.background = `linear-gradient(90deg, ${priorityColor(prio)}, ${priorityColor(prio)}88)`;
+    document.getElementById('rulVal').textContent =
+      `${data.rul_hours} saat (${data.rul_days} gün)`;
+
+    // Timestamp
+    document.getElementById('updateTs').textContent =
+      'Son: ' + new Date().toLocaleTimeString('tr-TR');
+
+    // Time series
+    pushTs(data.readings.temperature_c, data.readings.current_a, fp);
+
+  } catch (e) {
+    console.warn('Simulate error:', e);
+  }
+}
+
+tick();
+setInterval(tick, 2000);
+</script>
+</body>
+</html>
