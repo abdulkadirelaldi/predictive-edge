@@ -1,0 +1,1210 @@
+<!DOCTYPE html>
+<!-- DOCTYPE: Tarayıcıya "bu modern HTML5 belgesidir" der.
+     Olmasa tarayıcı eski uyumluluk moduna geçer, stiller bozulur. -->
+
+<html lang="tr">
+<!-- lang="tr": Ekran okuyucular ve arama motorları için dil bilgisi.
+     Türkçe karakterlerin doğru işlenmesine yardımcı olur. -->
+
+<head>
+<!-- HEAD bölümü: Sayfanın görünmeyen ayarları. Tarayıcıda gösterilmez. -->
+
+<meta charset="UTF-8">
+<!-- UTF-8: Türkçe harfleri (ğ, ş, ı, ç, ö, ü) doğru gösterir.
+     Olmasa "Arıza" yerine "Ar?za" görünür. -->
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- viewport: Mobil cihazlarda sayfa genişliğini ekrana uyarlar.
+     Olmasa mobilde sayfa küçücük görünür ve zoom gerektirir. -->
+
+<title>Predictive-Edge — Kestirimci Bakım Sistemi</title>
+<!-- Tarayıcı sekmesinde ve yer imlerinde görünen başlık. -->
+
+<style>
+/* ════════════════════════════════════════════════════════════
+   CSS DEĞİŞKENLERİ (RENK PALETİ)
+   CSS custom properties: --isim: değer; formatında tanımlanır.
+   :root → tüm sayfa için geçerli (global scope)
+   ════════════════════════════════════════════════════════════ */
+:root {
+  --bg:       #060c14;  /* Ana arka plan: çok koyu lacivert (siyahımsı) */
+  --card:     #0b1623;  /* Kart arka planı: biraz daha açık */
+  --card2:    #0f1e30;  /* İkincil kart: kart içi bölümler için */
+  --border:   #1a3048;  /* Kenarlıklar: koyu mavi-gri */
+  --cyan:     #00d4ff;  /* Vurgu rengi: elektrik mavisi (başlıklar, değerler) */
+  --green:    #00e676;  /* Sağlıklı / iyi durum: parlak yeşil */
+  --yellow:   #ffc107;  /* Uyarı durumu: amber sarı */
+  --orange:   #ff6d00;  /* Yüksek risk: turuncu */
+  --red:      #ff1744;  /* Kritik / alarm: parlak kırmızı */
+  --text:     #cdd9e5;  /* Normal metin: açık gri-mavi */
+  --muted:    #5d7a91;  /* Soluk metin: etiketler, açıklamalar */
+  --radius:   10px;     /* Kenar yuvarlama miktarı — tüm kartlarda kullanılır */
+}
+/* Neden değişken? Rengi 1 yerde değiştirince tüm sayfada güncellenir. */
+
+/* ── GLOBAL SIFIRLAMA ────────────────────────────────────── */
+* { margin:0; padding:0; box-sizing:border-box; }
+/* * → tüm HTML elementlerine uygulanır
+   margin:0; padding:0 → tarayıcı varsayılan boşlukları sıfırlar
+   box-sizing:border-box → padding ve border, elementin toplam genişliğine dahil edilir
+   (Olmasa padding eklince element beklenmedik şekilde büyür) */
+
+/* ── BODY (SAYFA KAPSAYICI) ─────────────────────────────── */
+body {
+  background: var(--bg);    /* Koyu arka plan rengi */
+  color: var(--text);        /* Varsayılan metin rengi */
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  /* Segoe UI: Windows/Android'de modern font
+     system-ui: macOS'ta San Francisco, Linux'ta system fontu
+     sans-serif: hiçbiri yoksa tarafından seçilir */
+  font-size: 14px;           /* Temel font boyutu — diğer em/rem değerler buna göre */
+  min-height: 100vh;         /* Sayfa en az ekran yüksekliği kadar → boş arka plan yok */
+  overflow-x: hidden;        /* Yatay scroll çubuğunu gizle */
+}
+
+/* ── ÖZEL KAYDIRMA ÇUBUĞU (Webkit tarayıcılar) ─────────── */
+::-webkit-scrollbar { width: 6px; }
+/* Kaydırma çubuğunu 6px ince yapar (varsayılan ~15px'dir) */
+::-webkit-scrollbar-track { background: var(--bg); }
+/* Çubuğun arka planı: sayfa rengiyle aynı → görünmez */
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+/* Sürüklenebilir kısım: koyu mavi, yuvarlatılmış köşeler */
+
+/* ── HEADER (ÜSTBANT) ───────────────────────────────────── */
+header {
+  background: linear-gradient(135deg, #071525 0%, #0a1f35 50%, #071525 100%);
+  /* Çapraz degrade: sol-alt koyu → orta biraz açık → sağ-alt koyu
+     135deg → sağ-alt köşeye doğru */
+  border-bottom: 1px solid var(--border);  /* Alt kenarlık ayırıcı */
+  padding: 0 28px;          /* Yatay iç boşluk */
+  height: 64px;             /* Sabit yükseklik */
+  display: flex;            /* Flexbox: çocukları yatay hizala */
+  align-items: center;      /* Dikey ortalama */
+  justify-content: space-between;  /* Logo sola, saat sağa */
+  position: sticky;         /* Sayfayı kaydırınca header üstte kalır */
+  top: 0;                   /* sticky için üstten 0px konumda */
+  z-index: 100;             /* Diğer elementlerin üzerinde görünür */
+  box-shadow: 0 2px 20px rgba(0,212,255,.08);
+  /* Altta hafif cyan gölge: derinlik hissi */
+}
+
+/* ── LOGO BLOĞU ─────────────────────────────────────────── */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;   /* İkon ile metin arasındaki boşluk */
+}
+
+.logo-icon {
+  width: 36px; height: 36px;
+  background: linear-gradient(135deg, var(--cyan), #0066ff);
+  /* Cyan'dan koyu maviye çapraz degrade */
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  box-shadow: 0 0 16px rgba(0,212,255,.4);
+  /* Parıltı efekti: cyan renkte dışa yayılan gölge */
+}
+
+/* ── CANLIYIM ROZETI ────────────────────────────────────── */
+.live-badge {
+  display: flex; align-items: center; gap: 7px;
+  background: rgba(0,230,118,.08);    /* Çok şeffaf yeşil arka plan */
+  border: 1px solid rgba(0,230,118,.2); /* Yarı şeffaf yeşil kenarlık */
+  border-radius: 20px;   /* Hap (pill) şekli */
+  padding: 5px 14px;
+  font-size: 12px; font-weight: 600;
+  color: var(--green);
+  letter-spacing: .5px;
+}
+
+.live-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;    /* Daire */
+  background: var(--green);
+  animation: pulse-green 1.4s ease-in-out infinite;
+  /* Yanıp sönen yeşil nokta → "canlı yayın" efekti */
+}
+
+@keyframes pulse-green {
+  0%,100% { opacity:1; transform:scale(1); box-shadow:0 0 0 0 rgba(0,230,118,.5); }
+  /* Başlangıç/bitiş: tam görünür, normal boyut, gölge sıfır */
+  50% { opacity:.7; transform:scale(1.3); box-shadow:0 0 0 5px rgba(0,230,118,0); }
+  /* Orta: biraz soluklaşır, %30 büyür, 5px dışa yayılan gölge (şeffaf) */
+}
+/* Bu animasyon 1.4 saniyede bir tekrarlanıyor */
+
+/* ── ALARM ZİLİ ─────────────────────────────────────────── */
+.alarm-badge {
+  position: absolute; top: -4px; right: -6px;
+  /* Absolute: ebeveynine (alarm-btn) göre konumlanır
+     Zilin sağ üst köşesine yerleştirir */
+  background: var(--red); color: #fff;
+  font-size: 9px; font-weight: 700;
+  width: 16px; height: 16px;
+  border-radius: 50%;    /* Kırmızı daire rozet */
+  display: flex; align-items: center; justify-content: center;
+  animation: shake .5s ease-in-out infinite;
+  /* Sallanma animasyonu: alarm varsa zil titrer */
+}
+
+@keyframes shake {
+  0%,100% { transform:rotate(-8deg); }  /* Sola eğik */
+  50%      { transform:rotate(8deg); }  /* Sağa eğik */
+}
+
+/* ── SAAT ────────────────────────────────────────────────── */
+#clock {
+  font-size: 15px; font-weight: 600; color: var(--cyan);
+  font-variant-numeric: tabular-nums;
+  /* tabular-nums: her rakam eşit genişlikte → sayılar kayarak değişmez */
+  letter-spacing: 1px;
+}
+
+/* ── KPI BARI (5 KART) ──────────────────────────────────── */
+.kpi-bar {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  /* 5 eşit sütun: 1fr her biri kullanılabilir alanın 1/5'i alır */
+  gap: 12px;
+  padding: 16px 24px;
+  background: rgba(11,22,35,.5);   /* Yarı şeffaf arka plan */
+  border-bottom: 1px solid var(--border);
+}
+
+.kpi-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);   /* 10px köşe yuvarlama */
+  padding: 16px 20px;
+  display: flex; flex-direction: column; gap: 6px;
+  transition: transform .2s, box-shadow .2s;
+  /* Hover animasyonu için geçiş süresi */
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);   /* Üzerine gelince 2px yukarı kaydır */
+  box-shadow: 0 6px 20px rgba(0,0,0,.3);  /* Derinlik gölgesi */
+}
+
+/* Her öncelik seviyesine farklı renk */
+.kpi-card.total  .kpi-value { color: var(--cyan); }
+.kpi-card.green  .kpi-value { color: var(--green); }
+.kpi-card.yellow .kpi-value { color: var(--yellow); }
+.kpi-card.orange .kpi-value { color: var(--orange); }
+.kpi-card.red    .kpi-value { color: var(--red); }
+
+.kpi-card.red {
+  border-color: rgba(255,23,68,.25);
+  background: rgba(255,23,68,.04);
+  animation: border-pulse 2s ease-in-out infinite;
+  /* Kritik kart: kenarlığı yanıp söner → dikkat çeker */
+}
+
+@keyframes border-pulse {
+  0%,100% { border-color: rgba(255,23,68,.25); }  /* Soluk kırmızı */
+  50%      { border-color: rgba(255,23,68,.6); }   /* Parlak kırmızı */
+}
+
+/* ── ANA IZGARA (Simülasyon + Zaman Serisi) ─────────────── */
+.main-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  /* Sol: 360px sabit (simülasyon paneli), Sağ: kalan alan (zaman serisi) */
+  gap: 14px;
+  padding: 14px 24px;
+}
+
+/* ── PANEL (KART KAPSAYICI) ─────────────────────────────── */
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;   /* Köşe yuvarlama dışına taşmayı önler */
+}
+
+.panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card2);  /* Biraz daha koyu → başlık ayrımı */
+}
+
+.panel-title {
+  font-size: 12px; font-weight: 700;
+  letter-spacing: .8px; text-transform: uppercase;
+  color: var(--cyan);
+}
+
+/* ── GAUGE (GÖSTERGE) ────────────────────────────────────── */
+.gauge-canvas-wrap {
+  position: relative;  /* İçindeki absolute elementler buna göre konumlanır */
+  width: 220px; height: 120px;
+}
+
+.gauge-center {
+  position: absolute;
+  bottom: 0; left: 50%;
+  transform: translateX(-50%);  /* Yatayda tam ortaya hizala */
+  text-align: center;
+}
+
+.gauge-pct {
+  font-size: 30px; font-weight: 800; line-height: 1;
+  /* Büyük, kalın arıza yüzdesi — rengi JavaScript ile değiştirilir */
+}
+
+/* ── OKUMALAR IZGARASI ───────────────────────────────────── */
+.readings-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;  /* 2 eşit sütun */
+  gap: 10px; margin-top: 14px;
+}
+
+.reading-item {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 13px;
+}
+
+.reading-value {
+  font-size: 18px; font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  /* tabular-nums: sayı değişince layout kaymaması için */
+}
+
+/* ── DURUM ROZETI (NORMAL/UYARI/KRİTİK) ─────────────────── */
+.status-LOW      { background:rgba(0,230,118,.12); border:1px solid rgba(0,230,118,.3); color:var(--green); }
+.status-MEDIUM   { background:rgba(255,193, 7,.10); border:1px solid rgba(255,193,7,.3); color:var(--yellow); }
+.status-HIGH     { background:rgba(255,109, 0,.10); border:1px solid rgba(255,109,0,.3); color:var(--orange); }
+.status-CRITICAL { background:rgba(255, 23,68,.12); border:1px solid rgba(255,23,68,.4); color:var(--red); animation:border-pulse 1.2s ease-in-out infinite; }
+/* Her durum: uygun renk + hafif arka plan + kenarlık
+   CRITICAL'da ek animasyon → en tehlikeli durum göze çarpsın */
+
+/* ── RUL ÇUBUĞU ──────────────────────────────────────────── */
+.rul-track {
+  height: 6px; background: var(--card2);
+  border-radius: 3px; overflow: hidden;
+}
+
+.rul-fill {
+  height: 100%; border-radius: 3px;
+  transition: width .6s ease, background .6s ease;
+  /* width: RUL yüzdesine göre JavaScript'ten güncellenir
+     transition: animasyonlu geçiş (0.6 saniye) */
+}
+
+/* ── İKİNCİL IZGARA (Metrikler + Dağılım) ───────────────── */
+.secondary-grid {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  /* Sol: esnek (metrikler), Sağ: 340px sabit (dağılım grafiği) */
+  gap: 14px; padding: 0 24px 14px;
+}
+
+/* ── MODEL METRİKLERİ ÇUBUKLARI ─────────────────────────── */
+.mbar-row {
+  display: grid;
+  grid-template-columns: 90px 1fr 50px;
+  /* Etiket: 90px sabit | Çubuk: esnek | Değer: 50px sabit */
+  align-items: center; gap: 10px; font-size: 12px;
+}
+
+.mbar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--cyan), #0066ff);
+  /* Soldan sağa: cyan → koyu mavi */
+  border-radius: 3px;
+  transition: width 1s ease;
+  /* Sayfa yüklenince animasyonlu dolma efekti */
+}
+/* .mbar-fill.green ve .yellow: farklı renk degradeleri */
+
+/* ── MOTOR KARTLARI IZGARASI ─────────────────────────────── */
+.motor-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  /* auto-fill: ekran genişliğine göre otomatik sütun sayısı
+     minmax(88px, 1fr): her kart minimum 88px, maksimum eşit pay */
+  gap: 8px;
+}
+
+.motor-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 8px;
+  cursor: pointer;
+  transition: all .18s;   /* Hover efekti için hızlı geçiş */
+  text-align: center;
+}
+
+.motor-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0,0,0,.4);
+}
+
+/* Her durum rengi için kart kenarlığı */
+.motor-card.low      { border-color:rgba(0,230,118,.25); }
+.motor-card.medium   { border-color:rgba(255,193, 7,.25); }
+.motor-card.high     { border-color:rgba(255,109, 0,.3); }
+.motor-card.critical { border-color:rgba(255,23, 68,.35); animation:border-pulse 1.8s ease-in-out infinite; }
+
+/* Yüzde değeri rengi */
+.motor-card.low      .m-pct { color:var(--green); }
+.motor-card.medium   .m-pct { color:var(--yellow); }
+.motor-card.high     .m-pct { color:var(--orange); }
+.motor-card.critical .m-pct { color:var(--red); }
+
+/* ── MODAL (DETAY PENCERESI) ─────────────────────────────── */
+.modal-overlay {
+  display: none;            /* Başlangıçta gizli */
+  position: fixed;          /* Sayfayı kapla, scroll'dan bağımsız */
+  inset: 0;                 /* top:0, right:0, bottom:0, left:0 kısayolu */
+  background: rgba(0,0,0,.7);     /* %70 şeffaf siyah arka plan */
+  backdrop-filter: blur(4px);      /* Arka planı bulanıklaştır (iOS efekti) */
+  z-index: 200;             /* Header(100)'ın üzerinde */
+  align-items: center; justify-content: center;
+}
+
+.modal-overlay.open { display: flex; }
+/* JavaScript .open sınıfını ekleyince modal görünür hale gelir */
+
+.modal {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 28px;
+  width: 460px; max-width: 95vw;
+  /* max-width: 95vw → mobilde ekrandan taşmaz */
+  box-shadow: 0 20px 60px rgba(0,0,0,.6);  /* Derin gölge */
+}
+</style>
+</head>
+
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     HEADER BÖLÜMÜ
+     Jinja2 şablon sözdizimi: {{ değişken }} → Python'dan gelen veri
+     ══════════════════════════════════════════════════════════ -->
+<header>
+  <div class="logo">
+    <div class="logo-icon">⚙</div>
+    <!-- ⚙ dişli emoji → endüstriyel tema -->
+    <div class="logo-text">
+      <h1>PREDICTIVE-EDGE</h1>
+      <p>TÜBİTAK BiGG 1812 · Kestirimci Bakım Sistemi v2.0</p>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <!-- CANLI badge: yeşil nokta + "CANLI" yazısı -->
+    <div class="live-badge">
+      <div class="live-dot"></div>
+      CANLI
+    </div>
+
+    <!-- Alarm zili: tıklayınca kritik motorlara kaydırır -->
+    <button class="alarm-btn"
+            onclick="scrollToFleet('critical')"
+            title="Kritik alarmlar">
+      🔔
+      <!-- {{ stats.alarm }}: Flask'tan gelen kritik alarm sayısı
+           Jinja2 bu değeri sayfa yüklenirken HTML'e yazar -->
+      <span class="alarm-badge" id="alarmCount">{{ stats.alarm }}</span>
+    </button>
+
+    <!-- Saat: JavaScript ile her saniye güncellenir -->
+    <div id="clock">--:--:--</div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════
+     KPI BARI — 5 ÖZET KART
+     {{ stats.xxx }}: Flask'tan app.py → _stats() fonksiyonundan gelir
+     ══════════════════════════════════════════════════════════ -->
+<div class="kpi-bar">
+
+  <div class="kpi-card total">
+    <div class="kpi-label">Toplam Motor</div>
+    <div class="kpi-value">{{ stats.total }}</div>
+    <!-- Python'da stats['total'] = len(MOTORS) = 200 -->
+    <div class="kpi-sub">Aktif izleme altında</div>
+  </div>
+
+  <div class="kpi-card green">
+    <div class="kpi-label">Sağlıklı</div>
+    <div class="kpi-value" id="kpi-low">{{ stats.low }}</div>
+    <!-- id="kpi-low": JavaScript bu elemanı bulup güncelleyebilir -->
+    <div class="kpi-sub">Öncelik: NORMAL</div>
+  </div>
+
+  <div class="kpi-card yellow">
+    <div class="kpi-label">Uyarı</div>
+    <div class="kpi-value" id="kpi-med">{{ stats.medium }}</div>
+    <div class="kpi-sub">72 saat içinde kontrol</div>
+  </div>
+
+  <div class="kpi-card orange">
+    <div class="kpi-label">Yüksek Risk</div>
+    <div class="kpi-value" id="kpi-high">{{ stats.high }}</div>
+    <div class="kpi-sub">24 saat içinde müdahale</div>
+  </div>
+
+  <div class="kpi-card red">
+    <div class="kpi-label">⚠ Kritik Alarm</div>
+    <div class="kpi-value" id="kpi-crit">{{ stats.critical }}</div>
+    <div class="kpi-sub">Hemen durdur!</div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     ANA IZGARA: Sol=Simülasyon Paneli | Sağ=Zaman Serisi
+     ══════════════════════════════════════════════════════════ -->
+<div class="main-grid">
+
+  <!-- ── SİMÜLASYON PANELİ (Sol) ──────────────────────────── -->
+  <div class="panel sim-panel">
+    <div class="panel-header">
+      <span class="panel-title">🔴 Canlı Motor Simülasyonu</span>
+      <span id="updateTs" style="font-size:10px;color:var(--muted)">--</span>
+      <!-- Son güncelleme zamanı: JavaScript tarafından yazılır -->
+    </div>
+
+    <div class="panel-body">
+
+      <!-- GAUGE CHART: Chart.js doughnut grafiği (yarım daire) -->
+      <div class="gauge-wrapper">
+        <div class="gauge-canvas-wrap">
+          <canvas id="gaugeChart"></canvas>
+          <!-- canvas: Chart.js'in çizim alanı. id ile JavaScript'ten erişilir -->
+          <div class="gauge-center">
+            <div class="gauge-pct" id="gaugePct" style="color:var(--green)">0%</div>
+            <!-- id="gaugePct": JavaScript bu yüzdeyi ve rengini günceller -->
+            <div class="gauge-label">Arıza Olasılığı</div>
+          </div>
+        </div>
+        <!-- Motor ID rozeti: hangi motor inceleniyor -->
+        <div class="motor-id-badge" id="simMotorId">MOTOR-0000</div>
+      </div>
+
+      <!-- SENSOR OKUMA KARTLARI: 2×2 ızgara -->
+      <div class="readings-grid">
+        <div class="reading-item">
+          <div class="reading-label">🌡 Sıcaklık</div>
+          <div class="reading-value" id="rTemp">
+            --<span class="reading-unit">°C</span>
+          </div>
+          <!-- id="rTemp": JavaScript sıcaklık değerini buraya yazar -->
+        </div>
+
+        <div class="reading-item">
+          <div class="reading-label">⚡ Akım</div>
+          <div class="reading-value" id="rCur">
+            --<span class="reading-unit">A</span>
+          </div>
+        </div>
+
+        <div class="reading-item">
+          <div class="reading-label">📳 Titreşim RMS</div>
+          <div class="reading-value" id="rVib">--</div>
+          <!-- RMS: √(mean(x²)) — sinyalin güç seviyesi -->
+        </div>
+
+        <div class="reading-item">
+          <div class="reading-label">🔁 Harmonik Oran</div>
+          <div class="reading-value" id="rHarm">--</div>
+          <!-- (E100Hz + E150Hz) / E50Hz — arıza göstergesi -->
+        </div>
+      </div>
+
+      <!-- DURUM ROZETI: LOW/MEDIUM/HIGH/CRITICAL -->
+      <div class="status-badge status-LOW" id="statusBadge">NORMAL</div>
+      <!-- JavaScript className'i "status-badge status-CRITICAL" gibi günceller -->
+
+      <!-- RUL ÇUBUĞU: Kalan Ömür ilerleme çubuğu -->
+      <div class="rul-bar-wrap">
+        <div class="rul-label">
+          <span>Kalan Ömür (RUL)</span>
+          <span id="rulVal">-- saat</span>
+          <!-- RUL = Remaining Useful Life (Kalan Kullanım Ömrü) -->
+        </div>
+        <div class="rul-track">
+          <div class="rul-fill" id="rulFill"
+               style="width:100%;background:var(--green)">
+          </div>
+          <!-- width: (rul_hours/8760)*100 % — JavaScript tarafından hesaplanır
+               Tam → yeşil, Azalınca → turuncu/kırmızı -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── ZAMAN SERİSİ CHART (Sağ) ─────────────────────────── -->
+  <div class="panel chart-panel">
+    <div class="panel-header">
+      <span class="panel-title">📈 Gerçek Zamanlı Sensör Geçmişi</span>
+      <span style="font-size:10px;color:var(--muted)">Son 40 okuma · 2 sn güncelleme</span>
+    </div>
+    <div class="panel-body" style="height:320px">
+      <canvas id="timeChart"></canvas>
+      <!-- 3 çizgi: Sıcaklık(°C), Akım(A), Arıza Olasılığı(%)
+           Sağ eksen: arıza %, Sol eksen: sıcaklık+akım -->
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     İKİNCİL IZGARA: Model Metrikleri + Filo Dağılımı
+     ══════════════════════════════════════════════════════════ -->
+<div class="secondary-grid">
+
+  <!-- ── MODEL PERFORMANS PANELİ ───────────────────────────── -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title">🧠 YSA Model Performansı</span>
+      <span style="font-size:10px;color:var(--muted)">MLP Classifier · Scikit-Learn</span>
+    </div>
+    <div class="panel-body">
+
+      <!-- 4 büyük metrik kart -->
+      <div class="metrics-grid">
+        <div class="metric-item">
+          <div class="metric-name">Hold-out Accuracy</div>
+          <div class="metric-val">{{ metrics.accuracy }}%</div>
+          <!-- Jinja2: metrics.accuracy = 98.00 (app.py'den) -->
+        </div>
+        <div class="metric-item">
+          <div class="metric-name">ROC-AUC</div>
+          <div class="metric-val green">{{ "%.4f"|format(metrics.roc_auc) }}</div>
+          <!-- "%.4f"|format: 4 ondalık basamak → 1.0000 -->
+        </div>
+        <div class="metric-item">
+          <div class="metric-name">5-Fold CV F1</div>
+          <div class="metric-val">{{ metrics.cv_f1 }}</div>
+          <!-- "0.9910 ± 0.0020" string olarak gelir -->
+        </div>
+        <div class="metric-item">
+          <div class="metric-name">5-Fold ROC-AUC</div>
+          <div class="metric-val green">{{ metrics.cv_auc }}</div>
+        </div>
+      </div>
+
+      <!-- Animasyonlu progress bar'lar (her metrik için) -->
+      <div class="metric-bar-list">
+        <div class="mbar-row">
+          <span class="mbar-name">Accuracy</span>
+          <div class="mbar-track">
+            <div class="mbar-fill" style="width:{{ metrics.accuracy }}%"></div>
+            <!-- width: 98% → çubuk ekranın %98'ini doldurur -->
+          </div>
+          <span class="mbar-num">{{ metrics.accuracy }}%</span>
+        </div>
+        <!-- F1, Precision, Recall, ROC-AUC için benzer yapı... -->
+        <div class="mbar-row">
+          <span class="mbar-name">F1-Score</span>
+          <div class="mbar-track">
+            <div class="mbar-fill" style="width:{{ (metrics.f1*100)|round(1) }}%"></div>
+            <!-- metrics.f1*100|round(1): 0.9804 → 98.04 → 98.0% genişlik -->
+          </div>
+          <span class="mbar-num">{{ "%.4f"|format(metrics.f1) }}</span>
+        </div>
+        <div class="mbar-row">
+          <span class="mbar-name">Precision</span>
+          <div class="mbar-track">
+            <div class="mbar-fill green" style="width:{{ (metrics.precision*100)|round(1) }}%"></div>
+          </div>
+          <span class="mbar-num">{{ "%.4f"|format(metrics.precision) }}</span>
+        </div>
+        <div class="mbar-row">
+          <span class="mbar-name">Recall</span>
+          <div class="mbar-track">
+            <div class="mbar-fill green" style="width:{{ (metrics.recall*100)|round(1) }}%"></div>
+          </div>
+          <span class="mbar-num">{{ "%.4f"|format(metrics.recall) }}</span>
+        </div>
+        <div class="mbar-row">
+          <span class="mbar-name">ROC-AUC</span>
+          <div class="mbar-track">
+            <div class="mbar-fill yellow" style="width:{{ (metrics.roc_auc*100)|round(1) }}%"></div>
+          </div>
+          <span class="mbar-num">{{ "%.4f"|format(metrics.roc_auc) }}</span>
+        </div>
+      </div>
+
+      <!-- Mimari rozeti -->
+      <div class="arch-badge" style="margin-top:14px">
+        <span class="arch-icon">🏗</span>
+        <div>
+          <div class="arch-info">
+            Mimari · {{ metrics.features }} Özellik · {{ metrics.iterations }} İterasyon
+          </div>
+          <div class="arch-val">{{ metrics.architecture }}</div>
+          <!-- "8 → 16 → 8 → 1": giriş → gizli1 → gizli2 → çıkış -->
+        </div>
+      </div>
+
+      <div class="arch-badge">
+        <span class="arch-icon">📊</span>
+        <div>
+          <div class="arch-info">
+            Veri: {{ metrics.samples }} Örnek · FFT Pipeline
+          </div>
+          <div class="arch-val">RUL Modeli: T_max × (1 − P_fault) + ε</div>
+          <!-- RUL formülü görsel olarak gösteriliyor -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── FİLO DAĞILIM CHART (Sağ) ─────────────────────────── -->
+  <div class="panel dist-panel">
+    <div class="panel-header">
+      <span class="panel-title">🎯 Filo Durumu</span>
+    </div>
+    <div class="panel-body">
+      <div class="dist-canvas-wrap">
+        <canvas id="distChart"></canvas>
+        <!-- Doughnut chart: 4 dilim = LOW/MEDIUM/HIGH/CRITICAL motor sayıları
+             JavaScript'te STATS değişkeniyle doldurulur -->
+      </div>
+      <!-- Renk açıklaması (legend) -->
+      <div class="dist-legend">
+        <div class="legend-item">
+          <div class="legend-left">
+            <div class="legend-dot" style="background:var(--green)"></div>
+            <span>Normal (LOW)</span>
+          </div>
+          <span class="legend-count" style="color:var(--green)">{{ stats.low }}</span>
+        </div>
+        <!-- MEDIUM, HIGH, CRITICAL için benzer yapı... -->
+        <div class="legend-item">
+          <div class="legend-left">
+            <div class="legend-dot" style="background:var(--yellow)"></div>
+            <span>Uyarı (MEDIUM)</span>
+          </div>
+          <span class="legend-count" style="color:var(--yellow)">{{ stats.medium }}</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-left">
+            <div class="legend-dot" style="background:var(--orange)"></div>
+            <span>Yüksek Risk (HIGH)</span>
+          </div>
+          <span class="legend-count" style="color:var(--orange)">{{ stats.high }}</span>
+        </div>
+        <div class="legend-item">
+          <div class="legend-left">
+            <div class="legend-dot" style="background:var(--red)"></div>
+            <span>Kritik Alarm</span>
+          </div>
+          <span class="legend-count" style="color:var(--red)">{{ stats.critical }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MOTOR FİLOSU — 200 MOTOR KART IZGARASI
+     ══════════════════════════════════════════════════════════ -->
+<div class="fleet-section">
+  <div class="fleet-header">
+    <span class="fleet-title">⚙ Motor Filosu — {{ stats.total }} Motor</span>
+    <!-- Filtre butonları: hangi sınıftaki motorları göster -->
+    <div class="fleet-filter">
+      <button class="filter-btn active" onclick="filterMotors('all',this)">Tümü</button>
+      <button class="filter-btn" onclick="filterMotors('low',this)">Normal</button>
+      <button class="filter-btn" onclick="filterMotors('medium',this)">Uyarı</button>
+      <button class="filter-btn" onclick="filterMotors('high',this)">Yüksek</button>
+      <button class="filter-btn" onclick="filterMotors('critical',this)">Kritik</button>
+      <!-- onclick: tıklanınca JavaScript filterMotors() çağrılır
+           this: tıklanan butonun kendisi (active sınıfı için) -->
+    </div>
+  </div>
+
+  <div class="motor-grid" id="motorGrid">
+    <!-- BOŞ — JavaScript buildMotorGrid() ile doldurulur
+         Her motor için dinamik kart oluşturulur -->
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════
+     MODAL: Motor tıklanınca açılan detay penceresi
+     ══════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="motorModal">
+  <!-- display:none başlangıçta → .open sınıfı eklenince görünür -->
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <h2 id="modalTitle">Motor Detayı</h2>
+    <!-- id="modalTitle": JavaScript buraya "MOTOR-0042 — Arızalı" yazar -->
+    <div class="modal-rows" id="modalBody">
+      <!-- JavaScript openModal(idx) ile satırlar oluşturulur:
+           Arıza Olasılığı | Durum | RUL | Sıcaklık | Akım | vb. -->
+    </div>
+  </div>
+</div>
+
+<footer>
+  Predictive-Edge v2.0 &nbsp;·&nbsp; TÜBİTAK BiGG 1812 &nbsp;·&nbsp;
+  MLP: 8→16→8→1 &nbsp;·&nbsp; 5-Fold CV F1: {{ metrics.cv_f1 }} &nbsp;·&nbsp;
+  Simülasyon 2 sn aralıklı güncelleniyor
+  <!-- &nbsp; → HTML'de boşluk karakteri (non-breaking space) -->
+</footer>
+
+<!-- Chart.js kütüphanesi CDN'den yükleniyor -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<!-- CDN = Content Delivery Network: dünyanın farklı sunucularından hızlı yükler
+     .umd.min.js = evrensel modül, küçültülmüş (min) → hızlı yüklenir -->
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   JAVASCRIPT BÖLÜMÜ
+   Sayfa yüklendikten sonra çalışır.
+   Flask'tan gelen veriler burada kullanılır.
+   ══════════════════════════════════════════════════════════ */
+
+/* ── VERİ (Jinja2 → JavaScript) ─────────────────────────── */
+const MOTORS = {{ motors_json|safe }};
+/* Jinja2 motors_json değişkenini (200 motorun JSON string'i) buraya yerleştirir.
+   |safe filtresi: HTML escape'i devre dışı bırakır (JSON'da < > karakterler olabilir)
+   Sonuç: const MOTORS = [{...}, {...}, ...]; — 200 elemanlı JavaScript dizisi */
+
+const STATS  = {{ stats|tojson }};
+/* stats Python sözlüğünü JavaScript nesnesine çevirir.
+   tojson filtresi: Jinja2'nin dahili JSON serialize işlemi
+   Sonuç: const STATS = {total:200, low:98, medium:23, ...}; */
+
+/* ── SAAT ────────────────────────────────────────────────── */
+function updateClock() {
+  document.getElementById('clock').textContent =
+    new Date().toLocaleTimeString('tr-TR');
+  /* new Date(): şu anki zaman
+     toLocaleTimeString('tr-TR'): Türkçe format → 14:35:07
+     textContent: elementin yazı içeriğini değiştirir (HTML değil, sadece metin) */
+}
+setInterval(updateClock, 1000);
+/* setInterval: her 1000ms (1 saniye) updateClock çağırır → canlı saat */
+updateClock();
+/* İlk çağrı: sayfa açılınca hemen güncelle (1 saniye bekleme olmaksızın) */
+
+/* ── RENK YARDIMCI FONKSİYONLARI ────────────────────────── */
+const C = {
+  LOW     : '#00e676',  /* Yeşil → sağlıklı */
+  MEDIUM  : '#ffc107',  /* Sarı → uyarı */
+  HIGH    : '#ff6d00',  /* Turuncu → yüksek risk */
+  CRITICAL: '#ff1744',  /* Kırmızı → kritik */
+  cyan    : '#00d4ff',  /* Mavi → nötr/genel */
+};
+/* Sabit nesne → renkleri merkezi yönetmek için. CSS değişkenlerine ek */
+
+function priorityColor(p) { return C[p] || C.cyan; }
+/* p = 'LOW'/'MEDIUM'/'HIGH'/'CRITICAL' → ilgili hex renk
+   || C.cyan: p tanımsızsa varsayılan mavi */
+
+function faultColor(pct) {
+  if (pct < 35) return C.LOW;       /* 0-34%: yeşil */
+  if (pct < 65) return C.MEDIUM;    /* 35-64%: sarı */
+  if (pct < 85) return C.HIGH;      /* 65-84%: turuncu */
+  return C.CRITICAL;                 /* 85-100%: kırmızı */
+}
+/* app.py'deki get_maintenance() eşikleriyle birebir aynı → tutarlılık */
+
+/* ══════════════════════════════════════════════════════════
+   GAUGE CHART (GÖSTERGE GRAFİĞİ)
+   Chart.js doughnut → 180° yarım daire
+   ══════════════════════════════════════════════════════════ */
+const gaugeCtx = document.getElementById('gaugeChart').getContext('2d');
+/* getElementById: HTML'deki canvas elementini bul
+   getContext('2d'): 2 boyutlu çizim bağlamı (Canvas API) */
+
+const gaugeChart = new Chart(gaugeCtx, {
+  type: 'doughnut',   /* Halka grafiği */
+  data: {
+    datasets: [{
+      data: [0, 100, 100],
+      /* 3 dilim: [gösterge_değeri, boş_kısım, arka_yarım_daire]
+         İlk başta: 0%, 100% boş, 100% arka plan */
+      backgroundColor: [C.LOW, 'rgba(255,255,255,.05)', 'transparent'],
+      /* Renkler: yeşil | çok soluk beyaz | tamamen şeffaf */
+      borderWidth: 0,     /* Dilimler arası kenarlık yok */
+      hoverOffset: 0,     /* Hover'da büyüme yok (bilgi göstermiyoruz) */
+    }]
+  },
+  options: {
+    circumference: 180,   /* Tam 360° değil, 180° (yarım daire) */
+    rotation: -90,        /* -90°'den başla → sol alt köşeden */
+    cutout: '72%',        /* Ortadaki delik boyutu → ince halka */
+    animation: { duration: 600 },  /* Her güncellemede 0.6s animasyon */
+    plugins: {
+      legend: { display: false },     /* Grafik altı etiketleri gizle */
+      tooltip: { enabled: false },    /* Hover tooltip'i gizle */
+    },
+    events: [],  /* Tüm fare olaylarını devre dışı bırak (tıklanamaz) */
+  }
+});
+
+function updateGauge(pct) {
+  /* pct: 0-100 arası arıza yüzdesi */
+  const col = faultColor(pct);        /* Renge göre renk seç */
+  gaugeChart.data.datasets[0].data = [pct, 100 - pct, 100];
+  /* [pct]: dolu kısım | [100-pct]: boş kısım | [100]: arka yarım daire */
+  gaugeChart.data.datasets[0].backgroundColor[0] = col;  /* Rengi güncelle */
+  gaugeChart.update('active');   /* Grafiği yeniden çiz (animasyonlu) */
+
+  const el = document.getElementById('gaugePct');
+  el.textContent = pct.toFixed(1) + '%';  /* "87.3%" */
+  el.style.color = col;          /* Yüzde metninin rengini de güncelle */
+}
+
+/* ══════════════════════════════════════════════════════════
+   ZAMAN SERİSİ CHART
+   Son 40 okumanın canlı çizgi grafiği
+   ══════════════════════════════════════════════════════════ */
+const MAX_POINTS = 40;
+/* Grafikte tutulacak maksimum nokta sayısı */
+
+const tsLabels = Array(MAX_POINTS).fill('');   /* 40 boş etiket */
+const tsTemp   = Array(MAX_POINTS).fill(null); /* 40 null sıcaklık */
+const tsCur    = Array(MAX_POINTS).fill(null); /* 40 null akım */
+const tsFP     = Array(MAX_POINTS).fill(null); /* 40 null arıza% */
+/* Başlangıçta tüm noktalar boş → grafik düzgün oluşur
+   null: Chart.js bu noktaları atlar (çizgi kopuk olmaz) */
+
+const tsCtx = document.getElementById('timeChart').getContext('2d');
+const timeChart = new Chart(tsCtx, {
+  type: 'line',
+  data: {
+    labels: tsLabels,
+    datasets: [
+      {
+        label: 'Sıcaklık (°C)',
+        data: tsTemp,
+        borderColor: C.CRITICAL,       /* Kırmızı çizgi */
+        backgroundColor: 'rgba(255,23,68,.06)',  /* Çok şeffaf dolgu */
+        borderWidth: 1.8,
+        fill: true,         /* Alan altını doldur */
+        tension: 0.35,      /* Çizgi yumuşaklığı: 0=düz, 1=çok kıvrık */
+        pointRadius: 0,     /* Her noktada daire çizme (performans) */
+        yAxisID: 'yLeft',   /* Sol Y ekseni kullan */
+      },
+      {
+        label: 'Akım (A)',
+        data: tsCur,
+        borderColor: C.cyan,
+        backgroundColor: 'rgba(0,212,255,.06)',
+        borderWidth: 1.8, fill: true, tension: 0.35, pointRadius: 0,
+        yAxisID: 'yLeft',
+      },
+      {
+        label: 'Arıza Olasılığı (%)',
+        data: tsFP,
+        borderColor: C.MEDIUM,
+        borderWidth: 1.5,
+        borderDash: [4, 3],    /* Kesik çizgi: 4px dolu, 3px boş */
+        fill: false,
+        tension: 0.3, pointRadius: 0,
+        yAxisID: 'yRight',     /* Sağ Y ekseni: 0-100% */
+      },
+    ]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,  /* Canvas boyutunu CSS'e bırak */
+    animation: { duration: 300 },
+    interaction: { mode: 'index', intersect: false },
+    /* mode:'index': aynı x noktasındaki tüm datasetleri tooltip'te göster */
+    scales: {
+      x: {
+        ticks: { display: false },        /* X ekseni etiketlerini gizle */
+        grid: { color: 'rgba(255,255,255,.04)' },  /* Çok soluk ızgara */
+      },
+      yLeft: {
+        type: 'linear', position: 'left',
+        /* Sol eksen: sıcaklık (°C) ve akım (A) için */
+        ticks: { color: '#5d7a91', font: { size: 10 } },
+        grid: { color: 'rgba(255,255,255,.04)' },
+      },
+      yRight: {
+        type: 'linear', position: 'right',
+        min: 0, max: 100,  /* Arıza % her zaman 0-100 aralığında */
+        /* grid: drawOnChartArea: false → sağ eksende ızgara çizme (sol yeter) */
+        grid: { drawOnChartArea: false },
+      },
+    }
+  }
+});
+
+function pushTs(temp, cur, fp) {
+  /* Yeni okuma geldiğinde grafiğe ekle, en eskiyi sil */
+  const now = new Date().toLocaleTimeString('tr-TR', {
+    hour:'2-digit', minute:'2-digit', second:'2-digit'
+  });
+
+  tsLabels.shift(); tsLabels.push(now);
+  /* shift(): dizinin ilk elemanını sil → en eski zaman damgası gider
+     push(now): sona yeni zaman damgası ekle */
+
+  tsTemp.shift();  tsTemp.push(temp);
+  tsCur.shift();   tsCur.push(cur);
+  tsFP.shift();    tsFP.push(fp);
+  /* Her veri dizisi de güncellenir: en eski veri çıkar, yeni veri girer */
+
+  timeChart.update('none');
+  /* 'none': animasyon olmadan güncelle → kayıyor görünüm için */
+}
+
+/* ══════════════════════════════════════════════════════════
+   DAĞILIM GRAFİĞİ (Filo Durumu Doughnut)
+   ══════════════════════════════════════════════════════════ */
+const distCtx = document.getElementById('distChart').getContext('2d');
+new Chart(distCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Normal', 'Uyarı', 'Yüksek Risk', 'Kritik'],
+    datasets: [{
+      data: [STATS.low, STATS.medium, STATS.high, STATS.critical],
+      /* STATS: Jinja2'den gelen filo istatistikleri */
+      backgroundColor: [
+        'rgba(0,230,118,.75)',   /* Yeşil: normal */
+        'rgba(255,193, 7,.75)',  /* Sarı: uyarı */
+        'rgba(255,109, 0,.75)',  /* Turuncu: yüksek risk */
+        'rgba(255, 23,68,.75)',  /* Kırmızı: kritik */
+      ],
+      borderColor: 'transparent',  /* Dilimler arası boşluk yok */
+      hoverOffset: 6,  /* Hover'da dilim 6px dışa çıkar */
+    }]
+  },
+  options: {
+    cutout: '60%',        /* Ortadaki delik boyutu */
+    animation: { duration: 800 },
+    plugins: {
+      legend: { display: false },  /* Kendi HTML legend'ımız var */
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.label}: ${ctx.parsed} motor`,
+          /* Tooltip formatı: " Normal: 98 motor" */
+        }
+      }
+    }
+  }
+});
+/* Bu grafik statik — sayfa yüklenince çizilir, güncellenmez */
+
+/* ══════════════════════════════════════════════════════════
+   MOTOR FİLOSU IZGARASI
+   ══════════════════════════════════════════════════════════ */
+const motorGrid   = document.getElementById('motorGrid');
+let   activeFilter = 'all';  /* Aktif filtre — varsayılan: hepsi */
+
+function buildMotorGrid(filter) {
+  motorGrid.innerHTML = '';
+  /* Önceki kartları temizle — filtre değişince sıfırdan oluştur */
+
+  MOTORS.forEach((m, i) => {
+    /* Her motor için kart oluştur
+       m: motor verisi | i: indeks (modal için) */
+    const p = m.maintenance.priority.toLowerCase();
+    /* 'LOW' → 'low' (CSS sınıf adlarıyla uyumlu) */
+
+    if (filter !== 'all' && p !== filter) return;
+    /* Filtre aktifse ve bu motor o filtreye uymuyorsa atla */
+
+    const fp  = m.prediction.fault_prob_pct;   /* Arıza yüzdesi */
+    const rul = m.maintenance.rul_days;         /* Kalan gün */
+
+    const card = document.createElement('div');
+    card.className = `motor-card ${p}`;
+    /* Örnek: "motor-card critical" → CSS'te ilgili renk uygulanır */
+
+    card.dataset.idx = i;  /* Motor indeksini depola (modal için) */
+
+    card.innerHTML = `
+      <div class="m-id">${m.meta.motor_id.replace('MOTOR-','M-')}</div>
+      <!-- MOTOR-0042 → M-0042 (daha kısa, karta sığar) -->
+      <div class="m-pct">${fp.toFixed(0)}%</div>
+      <!-- toFixed(0): ondalıksız tam sayı yüzde -->
+      <div class="m-rul">${rul}g</div>
+      <!-- g = gün kısaltması -->`;
+
+    card.addEventListener('click', () => openModal(i));
+    /* Tıklanınca openModal(i) çağır → detay penceresi aç */
+
+    motorGrid.appendChild(card);
+    /* Oluşturulan kartı ızgaraya ekle */
+  });
+}
+
+function filterMotors(f, btn) {
+  /* f: 'all'/'low'/'medium'/'high'/'critical'
+     btn: tıklanan buton elementi */
+  activeFilter = f;
+
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  /* Tüm filtre butonlarından 'active' sınıfını kaldır */
+
+  btn.classList.add('active');
+  /* Sadece tıklanan butona 'active' sınıfı ekle (mavi vurgu) */
+
+  buildMotorGrid(f);
+  /* Yeni filtreyle ızgarayı yeniden oluştur */
+}
+
+function scrollToFleet(f) {
+  /* Alarm ziline tıklanınca kritik motorlara kaydır */
+  document.querySelector('.fleet-section').scrollIntoView({ behavior: 'smooth' });
+  /* scrollIntoView: elementi görünür alana kaydırır
+     behavior:'smooth': animasyonlu kayma */
+
+  const btn = [...document.querySelectorAll('.filter-btn')]
+    .find(b => b.textContent.toLowerCase().includes(f === 'critical' ? 'kritik' : f));
+  /* 'critical' → 'kritik' (Türkçe buton metni) */
+
+  if (btn) filterMotors(f, btn);
+  /* Kritik filtresini otomatik uygula */
+}
+
+buildMotorGrid('all');  /* Sayfa yüklenince tüm motorları göster */
+
+/* ══════════════════════════════════════════════════════════
+   MODAL (MOTOR DETAY PENCERESİ)
+   ══════════════════════════════════════════════════════════ */
+function openModal(idx) {
+  const m    = MOTORS[idx];        /* İndekse göre motor verisi */
+  const s    = m.sensor_readings;  /* Sensör okumaları */
+  const prio = m.maintenance.priority;
+
+  document.getElementById('modalTitle').textContent =
+    `${m.meta.motor_id}  —  ${m.prediction.class_name}`;
+  /* Başlık: "MOTOR-0042 — Arızalı" */
+
+  document.getElementById('modalBody').innerHTML = [
+    ['Arıza Olasılığı', `${m.prediction.fault_prob_pct}%`,   faultColor(m.prediction.fault_prob_pct)],
+    ['Durum',           m.maintenance.status,                 priorityColor(prio)],
+    ['Öncelik',         prio,                                 priorityColor(prio)],
+    ['Kalan Ömür',      `${m.maintenance.rul_hours} saat (${m.maintenance.rul_days} gün)`, '#cdd9e5'],
+    ['Önerilen Eylem',  m.maintenance.recommended_action,    '#cdd9e5'],
+    ['Sıcaklık',        `${s.temperature_c} °C`,             '#cdd9e5'],
+    ['Akım',            `${s.current_a} A`,                  '#cdd9e5'],
+    ['Titreşim RMS',    `${s.vibration_rms}`,                '#cdd9e5'],
+    ['Harmonik Oran',   `${s.harmonic_ratio}`,               '#cdd9e5'],
+    ['Spektral Entropi',`${s.spectral_entropy}`,             '#cdd9e5'],
+  ]
+  /* Her satır: [etiket, değer, renk] üçlüsü */
+  .map(([k, v, col]) =>
+    `<div class="modal-row">
+       <span class="key">${k}</span>
+       <span class="val" style="color:${col}">${v}</span>
+     </div>`
+  )
+  /* Her üçlüyü HTML satırına çevir */
+  .join('');
+  /* Tüm satırları birleştir → tek HTML string */
+
+  document.getElementById('motorModal').classList.add('open');
+  /* 'open' sınıfı: display:none → display:flex (CSS'te tanımlı) */
+}
+
+function closeModal() {
+  document.getElementById('motorModal').classList.remove('open');
+  /* 'open' sınıfını kaldır → modal gizlenir */
+}
+
+document.getElementById('motorModal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) closeModal();
+  /* e.target: tıklanan element
+     e.currentTarget: event listener'ın bağlı olduğu element (overlay)
+     İkisi eşitse overlay'e (karanlık arka plana) tıklandı → kapat
+     Modal içine tıklanınca e.target = modal → eşit değil → kapanmaz */
+});
+
+/* ══════════════════════════════════════════════════════════
+   SİMÜLASYON DÖNGÜSÜ (ANA GERÇEKZAMANLı DÖNGÜ)
+   Her 2 saniyede /api/simulate çağrısı yapılır
+   ══════════════════════════════════════════════════════════ */
+async function tick() {
+  /* async: içinde await kullanılabilir (promise bekler) */
+  try {
+    const res  = await fetch('/api/simulate');
+    /* fetch: tarayıcının HTTP istekleri için API'si
+       await: sunucu yanıt verene kadar bekle (bloklama olmadan)
+       /api/simulate: app.py'deki simulate() fonksiyonu çalışır:
+         → Sinyal üret → FFT → özellik → scaler → MLP → RUL → JSON */
+
+    const data = await res.json();
+    /* res.json(): yanıt gövdesini JSON olarak çözümle (parse et)
+       data: {fault_prob, priority, status, readings, rul_hours, ...} */
+
+    const fp   = data.fault_prob;   /* 0-100 arıza yüzdesi */
+    const prio = data.priority;     /* 'LOW'/'MEDIUM'/'HIGH'/'CRITICAL' */
+
+    /* 1. Gauge'u güncelle */
+    updateGauge(fp);
+
+    /* 2. Motor ID'yi güncelle */
+    document.getElementById('simMotorId').textContent = data.motor_id;
+    /* Örnek: "MOTOR-0137" */
+
+    /* 3. Sensör okumalarını güncelle */
+    document.getElementById('rTemp').innerHTML =
+      `${data.readings.temperature_c.toFixed(1)}<span class="reading-unit">°C</span>`;
+    /* innerHTML: HTML içeriği ayarla (span etiketi için gerekli) */
+
+    document.getElementById('rCur').innerHTML =
+      `${data.readings.current_a.toFixed(2)}<span class="reading-unit">A</span>`;
+
+    document.getElementById('rVib').textContent =
+      data.readings.vibration_rms.toFixed(3);
+    /* textContent: düz metin (HTML etiketi yok) */
+
+    document.getElementById('rHarm').textContent =
+      data.readings.harmonic_ratio.toFixed(4);
+
+    /* 4. Durum rozetini güncelle */
+    const badge = document.getElementById('statusBadge');
+    badge.className = `status-badge status-${prio}`;
+    /* Örnek: "status-badge status-CRITICAL" → CSS'te kırmızı animasyonlu */
+    badge.textContent = data.status;
+    /* Örnek: "KRITIK ALARM" */
+
+    /* 5. RUL çubuğunu güncelle */
+    const rulPct = Math.min(100, (data.rul_hours / 8760) * 100);
+    /* rul_hours / 8760 (1 yıl saati) × 100 = yüzde
+       Math.min(100, ...): %100'ü aşmasını önle */
+
+    const rulFill = document.getElementById('rulFill');
+    rulFill.style.width   = rulPct + '%';
+    /* Çubuğun dolu kısmı → CSS width ile kontrol edilir */
+
+    rulFill.style.background =
+      `linear-gradient(90deg, ${priorityColor(prio)}, ${priorityColor(prio)}88)`;
+    /* Çubuk rengi: öncelik renginden → aynı rengin %53 şeffafına
+       88 = hex'te 136/255 ≈ %53 opacity */
+
+    document.getElementById('rulVal').textContent =
+      `${data.rul_hours} saat (${data.rul_days} gün)`;
+
+    /* 6. Son güncelleme zamanını yaz */
+    document.getElementById('updateTs').textContent =
+      'Son: ' + new Date().toLocaleTimeString('tr-TR');
+
+    /* 7. Zaman serisi grafiğine yeni nokta ekle */
+    pushTs(data.readings.temperature_c, data.readings.current_a, fp);
+
+  } catch (e) {
+    console.warn('Simulate error:', e);
+    /* Sunucu yanıt vermezse (bağlantı hatası vb.) konsola yaz, sayfa çökmez */
+  }
+}
+
+tick();               /* Sayfa açılınca hemen bir çıkarım yap */
+setInterval(tick, 2000);
+/* Ardından her 2000ms (2 saniye) tekrarla
+   2 saniye: yeterince canlı ama sunucuya aşırı yük bindirmez */
+</script>
+
+</body>
+</html>
