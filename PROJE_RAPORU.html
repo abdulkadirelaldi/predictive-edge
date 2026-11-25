@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang xml:lang>
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Predictive-Edge — Proje Raporu</title>
+  <style>
+
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+  <style type="text/css">@page { margin: 2.5cm 2cm; }
+body {
+font-family: "Georgia", "Times New Roman", serif;
+font-size: 11.5pt; line-height: 1.6; color: #1a1a1a;
+max-width: 820px; margin: 0 auto; padding: 24px;
+}
+h1 { font-size: 20pt; color: #0b3d66; border-bottom: 3px solid #0b3d66; padding-bottom: 6px; margin-top: 32px; }
+h2 { font-size: 15pt; color: #0b3d66; border-bottom: 1px solid #bcd; padding-bottom: 4px; margin-top: 28px; }
+h3 { font-size: 12.5pt; color: #15527d; margin-top: 20px; }
+table { border-collapse: collapse; width: 100%; margin: 14px 0; font-size: 10.5pt; }
+th, td { border: 1px solid #bbb; padding: 6px 10px; text-align: left; }
+th { background: #0b3d66; color: #fff; }
+tr:nth-child(even) { background: #f2f6fa; }
+code { background: #eef2f6; padding: 1px 5px; border-radius: 3px; font-size: 10pt; font-family: "Menlo","Consolas",monospace; }
+pre { background: #f6f8fa; border: 1px solid #d6dde4; border-left: 4px solid #0b3d66; padding: 12px 14px; overflow-x: auto; font-size: 9.5pt; line-height: 1.45; border-radius: 4px; }
+pre code { background: none; padding: 0; }
+blockquote { border-left: 4px solid #ccc; margin-left: 0; padding-left: 16px; color: #555; }
+hr { border: none; border-top: 1px solid #ccc; margin: 24px 0; }
+a { color: #15527d; text-decoration: none; }
+strong { color: #0b3d66; }
+div[align="center"] h1 { border: none; }
+div[align="center"] h2, div[align="center"] h3 { border: none; }
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Predictive-Edge — Proje Raporu</h1>
+</header>
+<div data-align="center">
+<h1 id="t.c.-samsun-üniversitesi">T.C. SAMSUN ÜNİVERSİTESİ</h1>
+<h2 id="mühendislik-fakültesi">MÜHENDİSLİK FAKÜLTESİ</h2>
+<h3 id="yazilim-mühendisliği-bölümü">YAZILIM MÜHENDİSLİĞİ BÖLÜMÜ</h3>
+<p><br></p>
+<h1 id="yapay-zeka-dersi">YAPAY ZEKA DERSİ</h1>
+<h1 id="final-proje-raporu">FİNAL PROJE RAPORU</h1>
+<p><br></p>
+<h2 id="predictive-edge">PREDICTIVE-EDGE</h2>
+<h3 id="sinyal-işleme-ve-yapay-sinir-ağı-tabanlı">Sinyal İşleme ve Yapay
+Sinir Ağı Tabanlı</h3>
+<h3 id="endüstriyel-motor-kestirimci-bakım-sistemi">Endüstriyel Motor
+Kestirimci Bakım Sistemi</h3>
+<p><br><br></p>
+<p><strong>Hazırlayan</strong></p>
+<p><strong>Abdulkadir ELALDI</strong> <strong>Öğrenci No:
+231118077</strong></p>
+<p><br></p>
+<p><strong>Ders:</strong> Yapay Zeka <strong>Öğretim Üyesi:</strong>
+Doç. Dr. Muammer TÜRKOĞLU</p>
+<p><br></p>
+<p><strong>Proje Deposu (GitHub):</strong>
+https://github.com/abdulkadirelaldi/Predictive-edge-v2</p>
+<p><br></p>
+<p><strong>Haziran 2026</strong> <strong>SAMSUN</strong></p>
+</div>
+<p><br></p>
+<hr />
+<section id="özet" data-align="center">
+<h2>ÖZET</h2>
+</section>
+<p>Bu projede, endüstriyel elektrik motorlarının <strong>titreşim,
+sıcaklık ve akım</strong> verilerini gerçek zamanlı olarak işleyerek
+olası rulman arızalarını önceden tahmin eden ve motorun <strong>kalan
+kullanım ömrünü (RUL)</strong> kestiren uçtan uca bir <strong>kestirimci
+bakım (predictive maintenance)</strong> sistemi geliştirilmiştir.
+Sistemin adı <strong>Predictive-Edge</strong>’dir.</p>
+<p>Çalışmada, rulman dinamiği literatürüne (ISO 15243) dayanan fiziksel
+kurallarla <strong>sentetik titreşim sinyalleri</strong> üretilmiş; bu
+sinyaller <strong>Hızlı Fourier Dönüşümü (FFT)</strong> ile frekans
+domenine taşınarak <strong>8 ayırt edici özellik</strong> çıkarılmıştır.
+Çıkarılan özellikler, <strong>scikit-learn</strong> kütüphanesi ile
+eğitilen <strong>Çok Katmanlı Algılayıcı (MLP)</strong> tabanlı bir
+yapay sinir ağına verilerek motorun sağlıklı/arızalı sınıflandırması
+yapılmıştır.</p>
+<p>Model, hold-out test setinde <strong>%98,00 doğruluk</strong>,
+<strong>1,0000 duyarlılık (recall)</strong> ve <strong>1,0000
+ROC-AUC</strong> değerlerine ulaşmıştır. <strong>5-katlı çapraz
+doğrulama (5-fold cross validation)</strong> ile F1 skoru <strong>0,9910
+± 0,0020</strong> olarak doğrulanmış; bu da modelin şansa bağlı
+olmadığını ve tutarlı çalıştığını göstermiştir. Geliştirilen model
+yalnızca <strong>289 parametre (1,13 KB)</strong> içermekte olup,
+<strong>STM32H7</strong> gibi mikrodenetleyicilerde çalışabilecek
+<strong>TinyML</strong> ölçeğindedir.</p>
+<p>Son olarak sonuçlar, <strong>Flask + Chart.js</strong> tabanlı gerçek
+zamanlı bir <strong>web dashboard</strong> üzerinde 200 motorluk bir
+filo için görselleştirilmiştir.</p>
+<p><strong>Anahtar Kelimeler:</strong> Kestirimci Bakım, Yapay Sinir
+Ağı, MLP, Sinyal İşleme, FFT, TinyML, Rulman Arıza Teşhisi, Makine
+Öğrenmesi</p>
+<hr />
+<h2 id="içindekiler">İÇİNDEKİLER</h2>
+<ol type="1">
+<li><a href="#1-giriş">Giriş</a></li>
+<li><a href="#2-problem-tanımı-ve-motivasyon">Problem Tanımı ve
+Motivasyon</a></li>
+<li><a href="#3-sistem-mimarisi">Sistem Mimarisi</a></li>
+<li><a href="#4-veri-üretimi-fizik-tabanlı-sentetik-veri">Veri Üretimi
+(Fizik Tabanlı Sentetik Veri)</a></li>
+<li><a href="#5-özellik-çıkarımı-ve-sinyal-i̇şleme">Özellik Çıkarımı ve
+Sinyal İşleme</a></li>
+<li><a href="#6-makine-öğrenmesi-modeli">Makine Öğrenmesi
+Modeli</a></li>
+<li><a href="#7-model-karşılaştırması-ve-hiperparametre-optimizasyonu">Model
+Karşılaştırması ve Hiperparametre Optimizasyonu</a></li>
+<li><a href="#8-deneysel-sonuçlar-ve-değerlendirme">Deneysel Sonuçlar ve
+Değerlendirme</a></li>
+<li><a href="#9-gömülü-sistem-tinyml--stm32h7-analizi">Gömülü Sistem
+(TinyML / STM32H7) Analizi</a></li>
+<li><a href="#10-web-dashboard-ve-gerçek-zamanlı-çıkarım">Web Dashboard
+ve Gerçek Zamanlı Çıkarım</a></li>
+<li><a href="#11-karşılaşılan-sorunlar-ve-çözümleri">Karşılaşılan
+Sorunlar ve Çözümleri</a></li>
+<li><a href="#12-sınırlılıklar-ve-gelecek-çalışmalar">Sınırlılıklar ve
+Gelecek Çalışmalar</a></li>
+<li><a href="#13-sonuç">Sonuç</a></li>
+<li><a href="#14-kaynaklar">Kaynaklar</a></li>
+<li><a href="#15-ekler">Ekler</a></li>
+</ol>
+<hr />
+<h2 id="giriş">1. GİRİŞ</h2>
+<p>Endüstriyel tesislerde elektrik motorları, üretim hatlarının en
+kritik bileşenlerindendir. Bir motorun beklenmedik şekilde arızalanması
+yalnızca onarım maliyeti değil, aynı zamanda <strong>üretim
+duruşu</strong>, <strong>iş gücü kaybı</strong> ve <strong>teslimat
+gecikmeleri</strong> gibi dolaylı maliyetler de doğurur. Bu nedenle
+modern Endüstri 4.0 yaklaşımında, arızayı <strong>olmadan önce tahmin
+etmek</strong> büyük önem taşımaktadır.</p>
+<p>Bu proje, <strong>Yapay Zeka</strong> dersi kapsamında, makine
+öğrenmesi ve sinyal işleme tekniklerini birleştirerek bir motorun arıza
+olasılığını ve kalan ömrünü tahmin eden çalışan bir prototip
+geliştirmeyi amaçlamaktadır. Proje; <strong>veri üretimi → sinyal işleme
+→ özellik çıkarımı → model eğitimi → değerlendirme → gerçek zamanlı
+arayüz</strong> olmak üzere tüm aşamaları uçtan uca kapsamaktadır.</p>
+<blockquote>
+<p><strong>Proje kaynak kodu ve tüm dosyalar GitHub üzerinde açık olarak
+yayımlanmıştır:</strong>
+<strong>https://github.com/abdulkadirelaldi/Predictive-edge-v2</strong></p>
+</blockquote>
+<h3 id="projenin-amaçları">1.1 Projenin Amaçları</h3>
+<ul>
+<li>Rulman arızalarının fiziksel temelini (arıza frekansları)
+modelleyerek <strong>gerçekçi sentetik veri</strong> üretmek,</li>
+<li>FFT tabanlı sinyal işleme ile <strong>ayırt edici
+özellikler</strong> çıkarmak,</li>
+<li>Bir <strong>MLP yapay sinir ağı</strong> eğitip arıza
+sınıflandırması yapmak,</li>
+<li>Modeli <strong>bilimsel olarak doğru bir metodoloji</strong> (çapraz
+doğrulama, veri sızıntısı önleme) ile değerlendirmek,</li>
+<li>Modelin <strong>gömülü sistemde (TinyML)</strong> çalışabilirliğini
+analiz etmek,</li>
+<li>Sonuçları <strong>gerçek zamanlı bir web panelinde</strong>
+görselleştirmek.</li>
+</ul>
+<h3 id="kullanılan-teknolojiler">1.2 Kullanılan Teknolojiler</h3>
+<table>
+<thead>
+<tr>
+<th>Katman</th>
+<th>Teknoloji</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Programlama Dili</td>
+<td>Python 3.14</td>
+</tr>
+<tr>
+<td>Makine Öğrenmesi</td>
+<td>scikit-learn (MLPClassifier)</td>
+</tr>
+<tr>
+<td>Sinyal İşleme</td>
+<td>NumPy, SciPy (<code>scipy.fft</code>,
+<code>scipy.signal</code>)</td>
+</tr>
+<tr>
+<td>Veri Görselleştirme</td>
+<td>Matplotlib, Seaborn</td>
+</tr>
+<tr>
+<td>Web Backend</td>
+<td>Flask 3.1</td>
+</tr>
+<tr>
+<td>Web Frontend</td>
+<td>HTML5, CSS3, JavaScript, Chart.js</td>
+</tr>
+<tr>
+<td>Model Kalıcılığı</td>
+<td>joblib (<code>model.pkl</code>, <code>scaler.pkl</code>)</td>
+</tr>
+<tr>
+<td>Geliştirme Ortamı</td>
+<td>Jupyter Notebook</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="problem-tanimi-ve-motivasyon">2. PROBLEM TANIMI VE
+MOTİVASYON</h2>
+<h3 id="endüstriyel-motorlarda-arıza-mekanizması">2.1 Endüstriyel
+Motorlarda Arıza Mekanizması</h3>
+<p>Bir elektrik motoru temel olarak şu bileşenlerden oluşur:
+<strong>rotor</strong> (dönen parça), <strong>stator</strong> (sabit
+parça), <strong>rulmanlar</strong> (rotoru taşıyan bilyeli yataklar) ve
+<strong>mil</strong> (gücü ileten çubuk). Sahadaki istatistiklere göre
+en sık arızalanan bileşen <strong>rulmanlardır</strong>. Rulman
+arızasının başlıca nedenleri metal yorgunluğu, yetersiz yağlama, aşırı
+yük ve titreşim birikimidir.</p>
+<p>Önemli olan nokta şudur: <strong>rulman arızası aniden
+gerçekleşmez.</strong> Arıza, haftalar hatta aylar boyunca titreşim ve
+sıcaklık değişimleri şeklinde belirtiler verir. Bu belirtiler
+sensörlerle ölçülebildiği için, makine öğrenmesi ile önceden tahmin
+edilebilirler.</p>
+<h3 id="bakım-stratejilerinin-karşılaştırması">2.2 Bakım Stratejilerinin
+Karşılaştırması</h3>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 31%" />
+<col style="width: 37%" />
+</colgroup>
+<thead>
+<tr>
+<th>Strateji</th>
+<th>Yaklaşım</th>
+<th>Dezavantaj</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Düzeltici Bakım</strong></td>
+<td>Arıza çıkınca tamir et</td>
+<td>Motor durunca üretim durur, acil tamir pahalı</td>
+</tr>
+<tr>
+<td><strong>Önleyici Bakım</strong></td>
+<td>Periyodik bakım (örn. 3 ayda bir)</td>
+<td>Gereksiz bakım maliyeti, çoğu motor bakım gerektirmez</td>
+</tr>
+<tr>
+<td><strong>Kestirimci Bakım</strong></td>
+<td>Sensöre bak, arızayı tahmin et</td>
+<td>Veri ve model gerektirir → <strong>bu projenin konusu</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Predictive-Edge</strong>, üçüncü stratejiyi (kestirimci
+bakım) uygulayarak yalnızca gerçekten gerektiğinde bakım yapılmasını
+sağlar; böylece hem maliyeti düşürür hem de üretim kesintilerini
+engeller.</p>
+<hr />
+<h2 id="sistem-mimarisi">3. SİSTEM MİMARİSİ</h2>
+<p>Sistem, fiziksel sinyalden mühendise ulaşan bildirime kadar
+bütünleşik bir veri akış hattı (pipeline) üzerine kuruludur:</p>
+<pre><code>   Motor Sensörleri (Titreşim + Sıcaklık + Akım)
+              │
+              ▼
+   Fizik Tabanlı Sinyal Üretimi (50/100/150 Hz harmonikleri + gürültü)
+              │
+              ▼
+   Sinyal İşleme — FFT (Frekans Domeni Analizi)
+              │
+              ▼
+   Özellik Çıkarımı (8 Özellik)
+              │
+              ▼
+   StandardScaler → MLP Yapay Sinir Ağı
+              │
+        ┌─────┴─────┐
+        ▼           ▼
+   Arıza Olasılığı   Kalan Ömür (RUL)
+        │           │
+        └─────┬─────┘
+              ▼
+   Bakım Önceliği Kararı (LOW / MEDIUM / HIGH / CRITICAL)
+              │
+              ▼
+   Flask REST API → Chart.js Web Dashboard → Mühendise Bildirim</code></pre>
+<h3 id="proje-dosya-yapısı">3.1 Proje Dosya Yapısı</h3>
+<pre><code>predictive-edge/
+├── predictive_edge.ipynb     # Ana çalışma defteri (model eğitimi, analiz)
+├── app.py                    # Flask backend (gerçek zamanlı çıkarım)
+├── model.pkl                 # Eğitilmiş MLP modeli (21 KB)
+├── scaler.pkl                # Eğitilmiş StandardScaler (807 B)
+├── dashboard_output.json     # 200 motorluk ön-hesaplı filo verisi
+├── templates/
+│   └── index.html            # Dashboard arayüzü
+└── *.png                     # Analiz görselleri (10 adet)</code></pre>
+<hr />
+<h2 id="veri-üretimi-fizik-tabanli-sentetik-veri">4. VERİ ÜRETİMİ (FİZİK
+TABANLI SENTETİK VERİ)</h2>
+<h3 id="neden-sentetik-veri">4.1 Neden Sentetik Veri?</h3>
+<p>Gerçek endüstriyel arıza verisi elde etmek pratikte çok zordur: bir
+motorun arızalanmasını beklemek aylar sürer, arıza etiketlemesi uzman
+gerektirir ve endüstriyel veriler genellikle gizlidir. Bu nedenle,
+<strong>rulman fiziğine dayalı</strong> sentetik veri üretilmiştir. Bu
+yaklaşım literatürde yaygın ve kabul gören bir yöntemdir.</p>
+<h3 id="rulman-arıza-frekanslarının-hesaplanması-iso-15243">4.2 Rulman
+Arıza Frekanslarının Hesaplanması (ISO 15243)</h3>
+<p>Motor parametreleri: <strong>3000 RPM</strong> → temel dönüş frekansı
+<code>f_rot = 3000/60 = 50 Hz</code>, <strong>6 bilyeli rulman</strong>,
+bilye/piston çapı oranı <code>d/D = 1/3</code>, temas açısı
+<code>α = 0°</code>.</p>
+<p><strong>Dış Bilezik Arıza Frekansı (BPFO — Ball Pass Frequency Outer
+race):</strong></p>
+<pre><code>BPFO = (n/2) × f_rot × (1 − (d/D) × cos α)
+     = (6/2) × 50 × (1 − 1/3 × 1)
+     = 3 × 50 × 0,667
+     = 100 Hz</code></pre>
+<p>Ayrıca <strong>3 × f_rot = 150 Hz</strong> mekanik gevşeklik
+(mechanical looseness) harmoniğine karşılık gelir. Bu iki frekans (100
+Hz ve 150 Hz), tüm proje boyunca arıza göstergesi olarak kullanılan
+sabitlerdir.</p>
+<h3 id="sinyal-modeli">4.3 Sinyal Modeli</h3>
+<p>Titreşim sinyali, fiziksel olarak anlamlı üç bileşenin ve gürültünün
+toplamı olarak modellenir:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>vibration <span class="op">=</span> (</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="fl">1.0</span>    <span class="op">*</span> sin(<span class="dv">2</span><span class="er">π</span> · <span class="dv">50</span>  · t) <span class="op">+</span>   <span class="co"># Temel motor frekansı</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    h2_amp <span class="op">*</span> sin(<span class="dv">2</span><span class="er">π</span> · <span class="dv">100</span> · t) <span class="op">+</span>   <span class="co"># BPFO — rulman dış bilezik arızası</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    h3_amp <span class="op">*</span> sin(<span class="dv">2</span><span class="er">π</span> · <span class="dv">150</span> · t) <span class="op">+</span>   <span class="co"># 3× mil harmoniği — mekanik gevşeklik</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    normal(<span class="dv">0</span>, noise_std, <span class="dv">1000</span>)      <span class="co"># Gerçekçi ölçüm gürültüsü</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>temperature <span class="op">=</span> clip(normal(<span class="dv">45</span> <span class="op">+</span> <span class="dv">23</span> · fault_level, <span class="dv">5</span>),  <span class="dv">18</span>, <span class="dv">110</span>)  <span class="co"># °C</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>current     <span class="op">=</span> clip(normal(<span class="fl">5.0</span> <span class="op">+</span> <span class="fl">3.5</span> · fault_level, <span class="fl">0.5</span>), <span class="fl">2.5</span>, <span class="dv">14</span>) <span class="co"># A</span></span></code></pre></div>
+<p>Burada <code>fault_level ∈ [0, 1]</code> arıza şiddetini temsil eder.
+Arıza şiddeti arttıkça harmonik genlikleri (<code>h2_amp</code>,
+<code>h3_amp</code>), gürültü, sıcaklık ve akım birlikte yükselir.</p>
+<h3 id="örtüşen-dağılımlar-gerçekçilik-için-bilinçli-tasarım">4.4
+Örtüşen Dağılımlar — Gerçekçilik İçin Bilinçli Tasarım</h3>
+<p>Projenin ilk sürümünde sağlıklı ve arızalı motor dağılımları hiç
+örtüşmüyordu; bu durum model için problemi yapay olarak kolaylaştırıyor
+ve <strong>%100 doğruluk</strong> gibi gerçekçi olmayan bir sonuç
+veriyordu. Bu sorunu gidermek için sağlıklı motorların bazen düşük
+harmonik gösterebileceği, arızalı motorların bazen yüksek harmonik
+gösterebileceği şekilde dağılımlar <strong>bilinçli olarak
+örtüştürülmüştür</strong>. Bu sayede sınıflar arasında gerçek dünyadaki
+gibi bir belirsizlik bölgesi oluşmuş ve sonuç %100 yerine
+<strong>%98</strong> seviyesine inerek gerçekçi hale gelmiştir.</p>
+<p>Toplam <strong>1000 örnek</strong> üretilmiştir: <strong>500 sağlıklı
++ 500 arızalı</strong> (dengeli veri kümesi).</p>
+<hr />
+<h2 id="özellik-çikarimi-ve-sinyal-işleme">5. ÖZELLİK ÇIKARIMI VE SİNYAL
+İŞLEME</h2>
+<h3 id="fft-hızlı-fourier-dönüşümü">5.1 FFT (Hızlı Fourier
+Dönüşümü)</h3>
+<p>Rulman arızaları zaman domeninde gözle ayırt edilmesi zor, ancak
+<strong>frekans domeninde</strong> belirgin enerji artışları olarak
+görünür. Bu nedenle titreşim sinyali FFT ile frekans domenine
+taşınır:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>freqs <span class="op">=</span> scipy.fft.rfftfreq(N, d<span class="op">=</span><span class="fl">1.0</span><span class="op">/</span>SAMPLE_RATE)   <span class="co"># 0–500 Hz frekans ekseni</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>mag   <span class="op">=</span> np.<span class="bu">abs</span>(scipy.fft.rfft(signal)) <span class="op">/</span> N          <span class="co"># Her frekanstaki büyüklük</span></span></code></pre></div>
+<p>Örnekleme hızı <code>SAMPLE_RATE = 1000 Hz</code>’dir.
+<strong>Nyquist teoremi</strong> gereği bu hız ile 500 Hz’e kadar tüm
+frekanslar doğru ölçülebilir; ilgilenilen en yüksek frekans (150 Hz) bu
+sınırın çok altındadır.</p>
+<h3 id="çıkarılan-8-özellik">5.2 Çıkarılan 8 Özellik</h3>
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 18%" />
+<col style="width: 22%" />
+<col style="width: 16%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr>
+<th>#</th>
+<th>Özellik</th>
+<th>Hesaplama</th>
+<th>Domain</th>
+<th>Arıza Göstergesi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>vibration_rms</code></td>
+<td>√(ortalama(x²))</td>
+<td>Zaman</td>
+<td>Yüksekse kötü</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>peak_to_peak</code></td>
+<td>max − min</td>
+<td>Zaman</td>
+<td>Yüksekse kötü</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>mean_abs</code></td>
+<td>ortalama(|x|)</td>
+<td>Zaman</td>
+<td>Yüksekse kötü</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>harmonic_ratio</code></td>
+<td>(E₁₀₀ + E₁₅₀) / E₅₀</td>
+<td>Frekans</td>
+<td>Yüksekse kötü</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>spectral_entropy</code></td>
+<td>−Σ pᵢ·log(pᵢ)</td>
+<td>Frekans</td>
+<td>Yüksekse kötü</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>n_spectral_peaks</code></td>
+<td>belirgin tepe sayısı</td>
+<td>Frekans</td>
+<td>Yüksekse kötü</td>
+</tr>
+<tr>
+<td>7</td>
+<td><code>temperature_c</code></td>
+<td>sensör ölçümü</td>
+<td>—</td>
+<td>Yüksekse kötü</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>current_a</code></td>
+<td>sensör ölçümü</td>
+<td>—</td>
+<td>Yüksekse kötü</td>
+</tr>
+</tbody>
+</table>
+<p><strong>En güçlü ayırt edici özellik
+<code>harmonic_ratio</code>’dur:</strong> Arıza frekanslarındaki
+(100/150 Hz) enerjinin, temel motor frekansındaki (50 Hz) enerjiye
+oranıdır. Sağlıklı motorda bu oran küçük (~0,02), arızalı motorda
+büyüktür (~0,45).</p>
+<p><strong>Spektral entropi</strong>, Shannon entropisinin FFT
+büyüklüğüne uygulanmış halidir. Sağlıklı motorda enerji 50 Hz’de
+yoğunlaştığından entropi düşük; arızalı motorda enerji birçok frekansa
+yayıldığından (kaotik) entropi yüksektir.</p>
+<hr />
+<h2 id="makine-öğrenmesi-modeli">6. MAKİNE ÖĞRENMESİ MODELİ</h2>
+<h3 id="çok-katmanlı-algılayıcı-mlp-mimarisi">6.1 Çok Katmanlı
+Algılayıcı (MLP) Mimarisi</h3>
+<pre><code>Giriş Katmanı  →  Gizli Katman 1  →  Gizli Katman 2  →  Çıkış Katmanı
+   8 nöron      →     16 nöron      →      8 nöron      →     1 nöron
+  (özellikler)      (ReLU)             (ReLU)            (Sigmoid → olasılık)</code></pre>
+<p><strong>Huni (funnel) mimarisi</strong> tercih edilmiştir: her katman
+daha az nöronla daha soyut özellikler öğrenir. Toplam parametre
+sayısı:</p>
+<pre><code>Katman 1:  8×16 + 16 = 144
+Katman 2: 16×8  +  8 = 136
+Çıkış:     8×1  +  1 =   9
+─────────────────────────────
+TOPLAM             = 289 parametre</code></pre>
+<h3 id="aktivasyon-fonksiyonları">6.2 Aktivasyon Fonksiyonları</h3>
+<ul>
+<li><strong>Gizli katmanlar — ReLU:</strong>
+<code>ReLU(x) = max(0, x)</code>. Hesabı hızlıdır ve gradyan kaybı
+(vanishing gradient) problemini hafifletir.</li>
+<li><strong>Çıkış katmanı — Sigmoid:</strong>
+<code>σ(x) = 1/(1+e⁻ˣ)</code>. Çıktıyı [0, 1] aralığına sıkıştırır ve
+doğrudan <strong>arıza olasılığı</strong> olarak yorumlanır.</li>
+</ul>
+<h3 id="eğitim-yapılandırması-ve-pipeline">6.3 Eğitim Yapılandırması ve
+Pipeline</h3>
+<p>Veri sızıntısını (data leakage) önlemek için <strong>ölçekleme
+(scaler) ve model bir Pipeline içinde birleştirilmiştir.</strong> Bu
+sayede çapraz doğrulamanın her katında scaler yalnızca o katın eğitim
+verisine <code>fit</code> edilir.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>pipeline <span class="op">=</span> Pipeline([</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&#39;scaler&#39;</span>, StandardScaler()),</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    (<span class="st">&#39;mlp&#39;</span>, MLPClassifier(</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        hidden_layer_sizes<span class="op">=</span>(<span class="dv">16</span>, <span class="dv">8</span>),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        activation<span class="op">=</span><span class="st">&#39;relu&#39;</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        solver<span class="op">=</span><span class="st">&#39;adam&#39;</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        learning_rate_init<span class="op">=</span><span class="fl">0.005</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        max_iter<span class="op">=</span><span class="dv">300</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        random_state<span class="op">=</span><span class="dv">42</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    ))</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>])</span></code></pre></div>
+<ul>
+<li><strong>Optimizasyon:</strong> Adam (momentum + adaptif öğrenme
+hızı)</li>
+<li><strong>Kayıp fonksiyonu:</strong> Binary cross-entropy →
+<code>−[y·log(ŷ) + (1−y)·log(1−ŷ)]</code></li>
+<li><strong>Yakınsama:</strong> Eğitim <strong>137 iterasyonda</strong>
+tamamlanmıştır.</li>
+</ul>
+<h3 id="veri-sızıntısının-önlenmesi-kritik-metodoloji">6.4 Veri
+Sızıntısının Önlenmesi (Kritik Metodoloji)</h3>
+<p>StandardScaler <strong>yalnızca eğitim setine</strong>
+<code>fit</code> edilir; test setine sadece <code>transform</code>
+uygulanır. Aksi halde test setinin istatistikleri modele sızar ve
+performans yapay olarak şişer. Bu kural, projenin metodolojik
+doğruluğunun temel taşıdır.</p>
+<pre><code>z = (x − μ_train) / σ_train      # μ ve σ yalnızca eğitim verisinden</code></pre>
+<hr />
+<h2 id="model-karşilaştirmasi-ve-hiperparametre-optimizasyonu">7. MODEL
+KARŞILAŞTIRMASI VE HİPERPARAMETRE OPTİMİZASYONU</h2>
+<h3 id="baseline-karşılaştırması">7.1 Baseline Karşılaştırması</h3>
+<p>Beş farklı sınıflandırıcı aynı veri üzerinde karşılaştırılmıştır:</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 31%" />
+<col style="width: 46%" />
+</colgroup>
+<thead>
+<tr>
+<th>Model</th>
+<th>F1 Skoru</th>
+<th>Elenme Nedeni</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Lojistik Regresyon</td>
+<td>~0,990</td>
+<td>Yalnızca doğrusal karar sınırı</td>
+</tr>
+<tr>
+<td>Random Forest</td>
+<td>~0,990</td>
+<td>100+ ağaç → yüzlerce KB bellek</td>
+</tr>
+<tr>
+<td>SVM (RBF)</td>
+<td>~0,990</td>
+<td>Destek vektörü başına O(n) kernel hesabı</td>
+</tr>
+<tr>
+<td>Gradient Boosting</td>
+<td>~0,990</td>
+<td>Ardışık ağaçlar → yavaş çıkarım</td>
+</tr>
+<tr>
+<td><strong>MLP (Seçilen)</strong></td>
+<td><strong>~0,990</strong></td>
+<td><strong>289 parametre → 1,13 KB, gömülü sistem uyumlu</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Önemli bulgu:</strong> Tüm modellerin performansı birbirine
+çok yakındır. Bu nedenle seçim kriteri performans değil, <strong>gömülü
+sistemde dağıtılabilirlik</strong> olmuştur.</p>
+<h3 id="gridsearchcv-hiperparametre-araması">7.2 GridSearchCV —
+Hiperparametre Araması</h3>
+<pre><code>6 mimari × 3 öğrenme hızı × 2 aktivasyon = 36 kombinasyon
+Her kombinasyon 5-katlı CV ile test edildi = 180 model eğitimi</code></pre>
+<p>En iyi 5 sonuç:</p>
+<table>
+<thead>
+<tr>
+<th>Sıra</th>
+<th>Mimari</th>
+<th>Aktivasyon</th>
+<th>LR</th>
+<th>F1</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>(32, 16)</td>
+<td>relu</td>
+<td>0,005</td>
+<td>0,9919</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>(16, 8)</strong></td>
+<td><strong>relu</strong></td>
+<td><strong>0,005</strong></td>
+<td><strong>0,9910</strong></td>
+</tr>
+<tr>
+<td>3</td>
+<td>(16, 8)</td>
+<td>tanh</td>
+<td>0,001</td>
+<td>0,9908</td>
+</tr>
+<tr>
+<td>4</td>
+<td>(32, 16)</td>
+<td>tanh</td>
+<td>0,001</td>
+<td>0,9906</td>
+</tr>
+<tr>
+<td>5</td>
+<td>(8, 4)</td>
+<td>relu</td>
+<td>0,005</td>
+<td>0,9895</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Mühendislik kararı:</strong> GridSearch en yüksek F1’i
+(32,16) mimarisinde bulmuş olsa da, aradaki fark yalnızca
+<strong>0,0009</strong>’dur ve bu standart sapmanın (≈0,004) altında
+kaldığından <strong>istatistiksel olarak anlamsızdır.</strong> Buna
+karşılık (32,16) mimarisi (16,8)’e göre <strong>~3 kat daha fazla
+parametre</strong> içerir. Bu nedenle, gömülü sistem kısıtı altında daha
+küçük olan <strong>(16,8) mimarisi</strong> tercih edilmiştir. Bu,
+performans ve donanım maliyeti arasında doğru bir ödünleşim (trade-off)
+örneğidir.</p>
+<hr />
+<h2 id="deneysel-sonuçlar-ve-değerlendirme">8. DENEYSEL SONUÇLAR VE
+DEĞERLENDİRME</h2>
+<h3 id="hold-out-test-sonuçları-200-örnek-hiç-görülmemiş">8.1 Hold-out
+Test Sonuçları (200 örnek, hiç görülmemiş)</h3>
+<table>
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 31%" />
+<col style="width: 31%" />
+</colgroup>
+<thead>
+<tr>
+<th>Metrik</th>
+<th>Değer</th>
+<th>Yorum</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Accuracy (Doğruluk)</strong></td>
+<td>%98,00</td>
+<td>200 örnekten 196’sı doğru</td>
+</tr>
+<tr>
+<td><strong>Precision (Kesinlik)</strong></td>
+<td>0,9709</td>
+<td>Düşük yanlış alarm oranı</td>
+</tr>
+<tr>
+<td><strong>Recall (Duyarlılık)</strong></td>
+<td><strong>1,0000</strong></td>
+<td><strong>Hiçbir arızalı motor kaçırılmadı</strong></td>
+</tr>
+<tr>
+<td><strong>F1 Score</strong></td>
+<td>0,9804</td>
+<td>Precision ve recall’un harmonik ortalaması</td>
+</tr>
+<tr>
+<td><strong>ROC-AUC</strong></td>
+<td>1,0000</td>
+<td>Her eşik değerinde mükemmel ayrım</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Karışıklık Matrisi (Confusion Matrix):</strong></p>
+<pre><code>                  Tahmin: Sağlıklı    Tahmin: Arızalı
+Gerçek: Sağlıklı        96                  3   (FP — gereksiz bakım)
+Gerçek: Arızalı          0                 101  (TP — doğru yakalama)</code></pre>
+<h3 id="metriklerin-yorumu-kestirimci-bakımda-neden-recall-önemlidir">8.2
+Metriklerin Yorumu — Kestirimci Bakımda Neden Recall Önemlidir?</h3>
+<p>Kestirimci bakımda iki tür hata vardır: - <strong>Yanlış Pozitif
+(FP):</strong> Sağlıklı motora “arızalı” demek → sadece <strong>gereksiz
+bakım maliyeti</strong>. - <strong>Yanlış Negatif (FN):</strong> Arızalı
+motora “sağlıklı” demek → <strong>fabrika duruşu, en tehlikeli
+hata.</strong></p>
+<p>Bu nedenle bu uygulamada <strong>Recall (duyarlılık)</strong> en
+kritik metriktir. Modelimiz <strong>Recall = 1,0000</strong> ile tüm
+arızalı motorları yakalamış, yalnızca 3 sağlıklı motoru yanlışlıkla
+arızalı işaretlemiştir (kabul edilebilir bir takas).</p>
+<h3 id="katlı-çapraz-doğrulama-sonuçları">8.3 5-Katlı Çapraz Doğrulama
+Sonuçları</h3>
+<p>Tek bir hold-out bölmesinin şansa bağlı olabileceği endişesini
+gidermek için 5-katlı çapraz doğrulama yapılmıştır:</p>
+<table>
+<thead>
+<tr>
+<th>Metrik</th>
+<th>Ortalama</th>
+<th>Std. Sapma</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Accuracy</td>
+<td>0,9810</td>
+<td>0,0080</td>
+</tr>
+<tr>
+<td>Precision</td>
+<td>0,9615</td>
+<td>0,0120</td>
+</tr>
+<tr>
+<td>Recall</td>
+<td>1,0000</td>
+<td>0,0000</td>
+</tr>
+<tr>
+<td>F1</td>
+<td>0,9910</td>
+<td>0,0020</td>
+</tr>
+<tr>
+<td>ROC-AUC</td>
+<td>0,9994</td>
+<td>0,0006</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Çok düşük standart sapmalar</strong>, modelin farklı veri
+bölmelerinde tutarlı çalıştığını ve sonucun şansa bağlı olmadığını
+kanıtlamaktadır.</p>
+<h3 id="kalan-kullanım-ömrü-rul-hesabı">8.4 Kalan Kullanım Ömrü (RUL)
+Hesabı</h3>
+<p>Arıza olasılığından kalan ömür, lineer degradasyon modeliyle
+kestirilir:</p>
+<pre><code>RUL = T_max × (1 − P_arıza) + ε      (T_max = 8760 saat = 1 yıl)</code></pre>
+<p>Örnek: <code>P_arıza = 0,30</code> →
+<code>RUL = 8760 × 0,70 ≈ 6132 saat ≈ 255 gün</code>. Hesaplanan ömre
+göre bakım önceliği belirlenir:</p>
+<table>
+<thead>
+<tr>
+<th>Arıza Olasılığı</th>
+<th>Öncelik</th>
+<th>Önerilen Eylem</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt; %35</td>
+<td>LOW</td>
+<td>Rutin bakım planla</td>
+</tr>
+<tr>
+<td>%35–65</td>
+<td>MEDIUM</td>
+<td>72 saat içinde kontrol et</td>
+</tr>
+<tr>
+<td>%65–85</td>
+<td>HIGH</td>
+<td>24 saat içinde müdahale et</td>
+</tr>
+<tr>
+<td>&gt; %85</td>
+<td>CRITICAL</td>
+<td>Motoru hemen durdur</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="gömülü-sistem-tinyml-stm32h7-analizi">9. GÖMÜLÜ SİSTEM (TinyML /
+STM32H7) ANALİZİ</h2>
+<p>Projenin en özgün yönlerinden biri, eğitilen modelin
+<strong>mikrodenetleyicide çalışabilirliğinin</strong> somut hesaplarla
+gösterilmesidir (TinyML).</p>
+<p><strong>Hedef donanım — STM32H7:</strong> ARM Cortex-M7 @ 480 MHz, 1
+MB SRAM, 2 MB Flash.</p>
+<table>
+<thead>
+<tr>
+<th>Ölçüt</th>
+<th>Değer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Model boyutu (Float32)</td>
+<td>289 × 4 byte = <strong>1,13 KB</strong></td>
+</tr>
+<tr>
+<td>Int8 niceleme sonrası</td>
+<td><strong>0,28 KB</strong> (4× küçülme)</td>
+</tr>
+<tr>
+<td>Flash kullanımı</td>
+<td><strong>%0,055</strong> (2048 KB’ın)</td>
+</tr>
+<tr>
+<td>MLP ileri besleme süresi</td>
+<td>~0,6 μs</td>
+</tr>
+<tr>
+<td>FFT (1000 nokta) süresi</td>
+<td>~20 μs</td>
+</tr>
+<tr>
+<td>Toplam çıkarım süresi</td>
+<td><strong>~21 μs</strong></td>
+</tr>
+<tr>
+<td>Maksimum çıkarım hızı</td>
+<td><strong>~47.000 çıkarım/saniye</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>STM32Cube.AI</strong> araç zinciri ile <code>model.pkl</code>
+→ ONNX → otomatik C kodu üretimi mümkündür. Bu, modelin internet
+bağlantısı gerektirmeden, düşük gecikmeyle ve güvenli şekilde
+<strong>edge</strong> üzerinde çalışabileceği anlamına gelir.</p>
+<hr />
+<h2 id="web-dashboard-ve-gerçek-zamanli-çikarim">10. WEB DASHBOARD VE
+GERÇEK ZAMANLI ÇIKARIM</h2>
+<p>Sistem, <strong>Flask</strong> backend ve <strong>Chart.js</strong>
+frontend ile gerçek zamanlı bir izleme paneli sunar. Panel 200 motorluk
+bir filoyu yönetir.</p>
+<h3 id="rest-api-uç-noktaları">10.1 REST API Uç Noktaları</h3>
+<table>
+<colgroup>
+<col style="width: 58%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr>
+<th>Endpoint</th>
+<th>İşlev</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /</code></td>
+<td>HTML dashboard sayfası</td>
+</tr>
+<tr>
+<td><code>GET /api/simulate</code></td>
+<td>Gerçek zamanlı model çıkarımı (canlı sinyal → FFT → MLP)</td>
+</tr>
+<tr>
+<td><code>GET /api/motors</code></td>
+<td>200 motorun listesi</td>
+</tr>
+<tr>
+<td><code>GET /api/stats</code></td>
+<td>Filo istatistikleri</td>
+</tr>
+</tbody>
+</table>
+<h3 id="gerçek-zamanlı-çıkarım-akışı">10.2 Gerçek Zamanlı Çıkarım
+Akışı</h3>
+<p><code>/api/simulate</code> çağrıldığında <strong>gerçek bir
+çıkarım</strong> yapılır (önceden hesaplanmış değer döndürülmez):</p>
+<pre><code>Her 3 saniyede:
+  1. JavaScript → fetch(&#39;/api/simulate&#39;)
+  2. Flask → generate_live_signal()  (fiziksel sinyal üret)
+          → extract_features()       (FFT&#39;yi gerçekten hesapla)
+          → run_inference()          (StandardScaler + MLP.predict_proba)
+          → RUL ve bakım önceliği hesapla
+  3. JSON yanıt → gauge, zaman serisi ve KPI kartlarını güncelle
+  4. priority=&#39;CRITICAL&#39; ise → alarm tetikle</code></pre>
+<p>Ölçülen tipik çıkarım süresi (Python ek yükü dahil) <strong>2–8
+ms</strong>’dir.</p>
+<h3 id="arayüz-bileşenleri">10.3 Arayüz Bileşenleri</h3>
+<ul>
+<li><strong>Gauge Chart:</strong> Yarım daire arıza göstergesi
+(yeşil/sarı/turuncu/kırmızı eşikler).</li>
+<li><strong>Zaman Serisi:</strong> Sıcaklık, akım ve arıza olasılığının
+son 40 okuması, canlı akış.</li>
+<li><strong>Motor Grid:</strong> 200 motor kartı; filtreleme ve detay
+modalı.</li>
+<li><strong>KPI Kartları:</strong> Toplam / sağlıklı / uyarı / yüksek
+risk / kritik motor sayıları.</li>
+<li><strong>Model Metrikleri Paneli:</strong> CV skorları, mimari,
+parametre sayısı.</li>
+</ul>
+<hr />
+<h2 id="karşilaşilan-sorunlar-ve-çözümleri">11. KARŞILAŞILAN SORUNLAR VE
+ÇÖZÜMLERİ</h2>
+<p>Bu bölüm, projenin geliştirilmesi sırasında yaşanan gerçek sorunları
+ve çözümlerini şeffaf biçimde belgeler — iyi mühendislik pratiğinin bir
+göstergesi olarak.</p>
+<h3 id="sorun-1-model-50-doğrulukta-kaldı-hiçbir-şey-öğrenmedi">Sorun 1
+— Model %50 Doğrulukta Kaldı (Hiçbir Şey Öğrenmedi)</h3>
+<p><strong>Belirti:</strong> Tüm örnekler “arızalı” tahmin edildi.
+<strong>Neden:</strong> <code>early_stopping=True</code> parametresi
+nedeniyle eğitim, model yakınsamadan 22. iterasyonda durdu.
+<strong>Çözüm:</strong> <code>early_stopping=False</code> ve
+<code>learning_rate_init=0.005</code> ile 137 iterasyonda gerçek
+yakınsama sağlandı. <strong>Ders:</strong> Erken durdurma her zaman
+faydalı değildir; kayıp eğrisi izlenmeli, gerçekten platoya mı
+ulaşıldığı doğrulanmalıdır.</p>
+<h3 id="sorun-2-100-doğruluk-gerçekçi-değil">Sorun 2 — %100 Doğruluk
+(Gerçekçi Değil)</h3>
+<p><strong>Belirti:</strong> Model tüm test örneklerini hatasız
+sınıflandırdı. <strong>Neden:</strong> Sağlıklı ve arızalı dağılımları
+(sıcaklık, harmonik) hiç örtüşmüyordu. <strong>Çözüm:</strong>
+Dağılımlar gerçekçi belirsizliği yansıtacak şekilde örtüştürüldü → %98
+doğruluk. <strong>Ders:</strong> Mükemmel sonuç istatistiksel olarak
+şüphelidir; gerçek veri asla %100 ayrılabilir değildir.</p>
+<h3 id="sorun-3-seaborn-violin-plot-hatası">Sorun 3 — Seaborn Violin
+Plot Hatası</h3>
+<p><strong>Neden:</strong> Yeni Seaborn sürümleri palette anahtarı
+olarak string bekliyor (integer değil). <strong>Çözüm:</strong>
+Etiketler <code>{0:&#39;Saglikli&#39;, 1:&#39;Arizali&#39;}</code> olarak string’e
+eşlendi. <strong>Ders:</strong> Kütüphane sürüm farkları küçük API
+değişimlerine yol açar; sürüm sabitleme önemlidir.</p>
+<h3 id="sorun-4-flask-port-çakışması">Sorun 4 — Flask Port
+Çakışması</h3>
+<p><strong>Neden:</strong> Eski Python süreci arka planda çalışmaya
+devam etti (port 5050 meşgul). <strong>Çözüm:</strong>
+<code>pkill -f &quot;python3 app.py&quot;</code> ile eski süreç sonlandırıldı.
+<strong>Ders:</strong> Sunucu süreçleri düzgün sonlandırılmalı; üretimde
+systemd/supervisor kullanılır.</p>
+<hr />
+<h2 id="sinirliliklar-ve-gelecek-çalişmalar">12. SINIRLILIKLAR VE
+GELECEK ÇALIŞMALAR</h2>
+<p>Bilimsel dürüstlük gereği projenin sınırlılıkları açıkça
+belirtilmiştir:</p>
+<p><strong>Sınırlılıklar:</strong> 1. <strong>Sentetik veri
+kullanılmıştır</strong> — gerçek sensör verisiyle doğrulama
+yapılmamıştır. 2. <strong>RUL modeli basittir</strong> — lineer
+degradasyon kullanılmıştır; Weibull veya LSTM daha gerçekçi olurdu. 3.
+<strong>Test seti küçüktür</strong> (200 örnek) — gerçek dağıtım için
+binlerce örnek gerekir. 4. <strong>Gerçek streaming yoktur</strong> —
+Kafka/MQTT gibi gerçek akış altyapısı yerine simülasyon
+kullanılmıştır.</p>
+<p><strong>Gelecek Çalışmalar:</strong> - Gerçek <strong>CWRU (Case
+Western Reserve University)</strong> rulman veri seti ile test, -
+<strong>Weibull dağılımı</strong> tabanlı istatistiksel RUL modeli, -
+<strong>LSTM</strong> ile zaman serisi anomali tespiti, - STM32H7
+üzerinde <strong>gerçek firmware dağıtımı</strong>, -
+<strong>OPC-UA</strong> ile endüstriyel SCADA entegrasyonu.</p>
+<hr />
+<h2 id="sonuç">13. SONUÇ</h2>
+<p>Bu projede, endüstriyel kestirimci bakımın temel prensiplerini uçtan
+uca uygulayan <strong>Predictive-Edge</strong> prototip sistemi
+geliştirilmiştir. Fizik tabanlı veri üretiminden FFT sinyal işlemeye,
+makine öğrenmesi modellemesinden gerçek zamanlı web panele kadar tüm
+bileşenler bütünleşik biçimde çalışmaktadır.</p>
+<p>Geliştirilen MLP modeli <strong>%98 doğruluk</strong>, <strong>1,0000
+recall</strong> ve <strong>0,9910 ± 0,0020 (CV) F1</strong> skorlarıyla
+yüksek ve <strong>tutarlı</strong> bir performans göstermiştir. Yalnızca
+<strong>289 parametre (1,13 KB)</strong> ile model,
+<strong>STM32H7</strong> mikrodenetleyicide çalışabilecek TinyML
+ölçeğindedir.</p>
+<p><strong>Projenin akademik katkıları:</strong> 1. Sinyal işleme ve
+makine öğrenmesinin entegrasyonu, 2. TinyML kısıtları altında
+metodolojik model seçimi, 3. Gerçekçi (örtüşen dağılımlı) sentetik veri
+üretimi, 4. Pipeline tabanlı veri sızıntısı önleme.</p>
+<p>Bu çalışma, yapay zekânın yalnızca bir sınıflandırma probleminden
+ibaret olmadığını; <strong>veri kalitesi, doğru değerlendirme
+metodolojisi, donanım kısıtları ve gerçek dünya dağıtımı</strong> gibi
+mühendislik boyutlarının da en az model kadar önemli olduğunu
+göstermektedir.</p>
+<hr />
+<h2 id="kaynaklar">14. KAYNAKLAR</h2>
+<ol type="1">
+<li>ISO 15243:2017 — <em>Rolling bearings — Damage and failures — Terms,
+characteristics and causes.</em></li>
+<li>Pedregosa, F. et al. (2011). <em>Scikit-learn: Machine Learning in
+Python.</em> Journal of Machine Learning Research, 12, 2825–2830.</li>
+<li>Harris, C. R. et al. (2020). <em>Array programming with NumPy.</em>
+Nature, 585, 357–362.</li>
+<li>Virtanen, P. et al. (2020). <em>SciPy 1.0: fundamental algorithms
+for scientific computing in Python.</em> Nature Methods, 17,
+261–272.</li>
+<li>Cooley, J. W. &amp; Tukey, J. W. (1965). <em>An algorithm for the
+machine calculation of complex Fourier series.</em> Mathematics of
+Computation, 19(90), 297–301.</li>
+<li>Kingma, D. P. &amp; Ba, J. (2015). <em>Adam: A Method for Stochastic
+Optimization.</em> ICLR.</li>
+<li>STMicroelectronics. <em>STM32Cube.AI — Artificial Intelligence (AI)
+Documentation.</em></li>
+<li>Case Western Reserve University Bearing Data Center — <em>Bearing
+Fault Dataset.</em></li>
+</ol>
+<hr />
+<h2 id="ekler">15. EKLER</h2>
+<p>Proje dizininde yer alan üretilmiş analiz görselleri:</p>
+<table>
+<colgroup>
+<col style="width: 46%" />
+<col style="width: 53%" />
+</colgroup>
+<thead>
+<tr>
+<th>Dosya</th>
+<th>İçerik</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>bearing_physics.png</code></td>
+<td>Rulman arıza frekansı analizi</td>
+</tr>
+<tr>
+<td><code>signal_analysis.png</code></td>
+<td>Zaman domeni + FFT frekans spektrumu</td>
+</tr>
+<tr>
+<td><code>feature_distribution.png</code></td>
+<td>Özelliklerin sağlıklı/arızalı violin grafiği</td>
+</tr>
+<tr>
+<td><code>correlation_matrix.png</code></td>
+<td>Özellikler arası korelasyon haritası</td>
+</tr>
+<tr>
+<td><code>model_performance.png</code></td>
+<td>Karışıklık matrisi + ROC eğrisi</td>
+</tr>
+<tr>
+<td><code>learning_curve.png</code></td>
+<td>Öğrenme eğrisi (overfitting analizi)</td>
+</tr>
+<tr>
+<td><code>cv_metrics.png</code></td>
+<td>5-katlı çapraz doğrulama metrikleri</td>
+</tr>
+<tr>
+<td><code>baseline_comparison.png</code></td>
+<td>Model karşılaştırma grafiği</td>
+</tr>
+<tr>
+<td><code>gridsearch_results.png</code></td>
+<td>Hiperparametre ısı haritası</td>
+</tr>
+<tr>
+<td><code>stm32_analysis.png</code></td>
+<td>Gömülü sistem (STM32H7) analizi</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Sistemi çalıştırmak için:</strong></p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> clone https://github.com/abdulkadirelaldi/Predictive-edge-v2</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> Predictive-edge-v2</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> app.py     →     http://localhost:5050</span></code></pre></div>
+<p><br></p>
+<div data-align="center">
+<hr />
+<p><em>Bu rapor, Samsun Üniversitesi Yazılım Mühendisliği Bölümü Yapay
+Zeka dersi final ödevi kapsamında hazırlanmıştır.</em></p>
+<p><strong>Abdulkadir ELALDI — 231118077 — Haziran 2026</strong></p>
+</div>
+</body>
+</html>
